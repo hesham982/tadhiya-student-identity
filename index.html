@@ -1,0 +1,2000 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <meta name="format-detection" content="telephone=no">
+    <title>اعدادية التضحية للبنين - صفحة بيانات هوية الطالب</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- JSZip Library for Downloading All Photos Named by Student Name -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f1f5f9;
+            --tg-theme-text-color: #0f172a;
+            --tg-theme-hint-color: #64748b;
+            --tg-theme-link-color: #2563eb;
+            --tg-theme-button-color: #2563eb;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-header-bg-color: #1d4ed8;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--tg-theme-secondary-bg-color, #f1f5f9);
+            color: var(--tg-theme-text-color, #0f172a);
+            margin: 0;
+            padding-top: env(safe-area-inset-top, 0);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0) + 85px);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .tg-card {
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .tg-button {
+            background-color: var(--tg-theme-button-color, #2563eb);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        /* Telegram Native Dark Mode Support */
+        body.tg-dark {
+            --tg-theme-bg-color: #18222d;
+            --tg-theme-secondary-bg-color: #0e1621;
+            --tg-theme-text-color: #f5f5f5;
+            background-color: var(--tg-theme-secondary-bg-color, #0e1621);
+            color: var(--tg-theme-text-color, #f5f5f5);
+        }
+        body.tg-dark .tg-card {
+            background-color: var(--tg-theme-bg-color, #18222d) !important;
+            border-color: #242f3d !important;
+            color: #f5f5f5 !important;
+        }
+        body.tg-dark input,
+        body.tg-dark select,
+        body.tg-dark textarea {
+            background-color: #0e1621 !important;
+            border-color: #2b3b4d !important;
+            color: #ffffff !important;
+        }
+        body.tg-dark input::placeholder {
+            color: #6c7883 !important;
+        }
+        body.tg-dark .bg-slate-50 {
+            background-color: #18222d !important;
+        }
+        body.tg-dark .bg-slate-100 {
+            background-color: #242f3d !important;
+            color: #e2e8f0 !important;
+        }
+        body.tg-dark .text-slate-800, body.tg-dark .text-slate-700 {
+            color: #f1f5f9 !important;
+        }
+        body.tg-dark .text-slate-500, body.tg-dark .text-slate-600 {
+            color: #94a3b8 !important;
+        }
+        body.tg-dark .border-slate-200, body.tg-dark .border-slate-300 {
+            border-color: #242f3d !important;
+        }
+        body.tg-dark .admin-table thead tr {
+            background-color: #18222d !important;
+        }
+        body.tg-dark .admin-table tbody tr:hover {
+            background-color: rgba(36, 47, 61, 0.7) !important;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        /* Mirror front camera stream naturally */
+        .mirror-video {
+            transform: scaleX(-1);
+        }
+        /* Structured Admin Table Row Heights */
+        .admin-table thead tr {
+            height: 32px;
+        }
+        .admin-table tbody tr {
+            height: 30px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20">
+
+    <!-- Header Section (Student-Only Clean Header + Discreet Admin Button) -->
+    <header class="bg-gradient-to-l from-blue-700 via-blue-600 to-indigo-700 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25 shadow-inner">
+                    <i class="fa-solid fa-school text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="font-bold text-base sm:text-lg leading-tight">اعدادية التضحية للبنين</h1>
+                        <span class="bg-amber-400/30 border border-amber-200/50 text-amber-100 text-[10px] px-2 py-0.5 rounded-full font-bold">صفحة بيانات هوية الطالب</span>
+                    </div>
+                    <p id="tg-user-welcome" class="text-xs text-blue-100 mt-0.5">يرجى إكمال بيانات هويتك والتقاط صورتك المباشرة</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Telegram WebApp Active Badge -->
+                <div id="tg-app-pill" class="hidden items-center gap-1.5 bg-white/15 px-2.5 py-1.5 rounded-xl text-xs font-bold border border-white/20 backdrop-blur-sm">
+                    <i class="fa-brands fa-telegram text-sky-300 text-sm"></i>
+                    <span id="tg-app-username" class="truncate max-w-[90px] sm:max-w-[130px]">تيليجرام</span>
+                </div>
+
+                <!-- Connection Status Badge -->
+                <div id="db-status-badge" class="hidden sm:flex items-center gap-1.5 bg-black/25 px-3 py-1.5 rounded-full text-xs font-medium border border-white/15">
+                    <span id="db-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="db-status-text">جاري الاتصال...</span>
+                </div>
+
+                <!-- Discreet Admin Lock Button -->
+                <button
+                    id="admin-access-btn"
+                    onclick="handleAdminButtonClick()"
+                    title="بوابة المشرف"
+                    class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 active:scale-95 transition px-3 py-1.5 rounded-xl text-xs font-bold border border-white/20"
+                >
+                    <i id="admin-lock-icon" class="fa-solid fa-lock text-amber-300"></i>
+                    <span id="admin-lock-label">الإدارة</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-3xl w-full mx-auto px-4 pt-5 flex-1">
+
+        <!-- Notification Banner -->
+        <div id="toast-banner" class="hidden mb-4 p-4 rounded-2xl shadow-md border flex items-center justify-between gap-3 animate-fade">
+            <div class="flex items-center gap-3">
+                <i id="toast-icon" class="fa-solid fa-circle-check text-xl"></i>
+                <p id="toast-message" class="text-sm font-bold"></p>
+            </div>
+            <button onclick="hideToast()" class="text-current opacity-60 hover:opacity-100">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- VIEW 1: STUDENT REGISTRATION FORM (DEFAULT PUBLIC VIEW FOR STUDENTS) -->
+        <section id="section-register" class="animate-fade">
+            <div class="tg-card rounded-3xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-id-card text-blue-600"></i>
+                            <span>استمارة بيانات هوية الطالب</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">يرجى إدخال الاسم الرباعي وسنة الميلاد ورقم هاتف ولي الأمر مع التقاط صورة شخصية مباشرة</p>
+                    </div>
+                    <span class="bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold px-2.5 py-1 rounded-xl flex items-center gap-1">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>التقاط مباشر فقط</span>
+                    </span>
+                </div>
+
+                <form id="student-form" class="space-y-5">
+                    <!-- Student Full Quadruple Name (الاسم الرباعي) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="student-name" class="block text-sm font-bold text-slate-700">
+                                الاسم الرباعي للطالب <span class="text-rose-500">*</span>
+                            </label>
+                            <span id="quad-name-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 transition">
+                                0 / 4 مقاطع
+                            </span>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input
+                                type="text"
+                                id="student-name"
+                                required
+                                oninput="handleQuadNameInput()"
+                                placeholder="الاسم الأول + الأب + الجد + اللقب (مثال: أحمد محمد علي حسن)"
+                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-medium"
+                            >
+                        </div>
+                        <div class="flex items-center justify-between mt-1.5">
+                            <p id="quad-name-hint" class="text-[11px] text-slate-500">
+                                يرجى كتابة الاسم الرباعي الكامل كما في الهوية الرسمية
+                            </p>
+                            <p id="photo-filename-live-badge" class="hidden text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
+                                <i class="fa-regular fa-image ml-1"></i>
+                                اسم الصورة: <span id="photo-filename-live-text"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Student Birth Year Only (سنة الميلاد) — minimizes collected personal data -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="student-birth-year" class="block text-sm font-bold text-slate-700">
+                                سنة الميلاد <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] text-slate-400 font-medium">أربعة أرقام فقط</span>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 pointer-events-none">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                            <input
+                                type="number"
+                                id="student-birth-year"
+                                inputmode="numeric"
+                                min="1990"
+                                max="2026"
+                                step="1"
+                                required
+                                placeholder="مثال: 2008"
+                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-right placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-bold tracking-wide"
+                            >
+                        </div>
+                        <p id="birth-year-hint" class="text-[11px] text-slate-500 mt-1.5">أدخل سنة الميلاد فقط (مثال: 2008) — لا نجمع تاريخ الميلاد الكامل</p>
+                    </div>
+
+                    <!-- Guardian Phone Number (رقم هاتف ولي الأمر) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="guardian-phone" class="block text-sm font-bold text-slate-700">
+                                رقم هاتف ولي الأمر <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] text-slate-400 font-medium">يفضل رقم يدعم واتساب أو الاتصال المباشر</span>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                                <i class="fa-solid fa-phone-volume"></i>
+                            </span>
+                            <input
+                                type="tel"
+                                id="guardian-phone"
+                                dir="ltr"
+                                inputmode="tel"
+                                required
+                                placeholder="0770XXXXXXX"
+                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-right placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-bold tracking-wide"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Strict Live Camera Capture Section (No Gallery Picker) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold text-slate-700">
+                                الصورة الشخصية للطالب (كاميرا مباشرة) <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] text-rose-600 font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-ban"></i>
+                                الالتقاط بالكاميرا فقط
+                            </span>
+                        </div>
+
+                        <!-- Strict Camera Wrapper -->
+                        <div class="border-2 border-slate-200 bg-slate-50 rounded-3xl p-4 text-center relative overflow-hidden">
+
+                            <!-- State A: Camera Idle (Before Starting Stream) -->
+                            <div id="camera-idle-state" class="py-6 flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-camera text-2xl"></i>
+                                </div>
+                                <p class="text-sm font-extrabold text-slate-800">الكاميرا المباشرة مطلوبة لالتقاط صورة الطالب</p>
+                                <p class="text-xs text-slate-500 mt-1 max-w-sm">اضغط على الزر أدناه لفتح الكاميرا الأمامية والتقاط صورة شخصية واضحة داخل الإطار المحدد</p>
+                                <button
+                                    type="button"
+                                    onclick="startLiveCamera()"
+                                    class="mt-4 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-md shadow-blue-600/20 transition"
+                                >
+                                    <i class="fa-solid fa-video"></i>
+                                    <span>تشغيل الكاميرا لالتقاط الصورة</span>
+                                </button>
+                            </div>
+
+                            <!-- State B: Live WebRTC Video Viewfinder -->
+                            <div id="camera-stream-state" class="hidden flex-col items-center">
+                                <div class="relative w-full max-w-xs aspect-[3/4] bg-slate-900 rounded-2xl overflow-hidden shadow-inner border-2 border-blue-500 mx-auto">
+                                    <video
+                                        id="live-camera-video"
+                                        autoplay
+                                        playsinline
+                                        muted
+                                        class="w-full h-full object-cover mirror-video"
+                                    ></video>
+
+                                    <!-- ID Photo Guide Overlay -->
+                                    <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-4">
+                                        <div class="w-44 h-56 border-2 border-dashed border-white/75 rounded-[50%] shadow-[0_0_0_9999px_rgba(15,23,42,0.38)]"></div>
+                                        <span class="mt-3 bg-black/60 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                                            ضع الوجه في منتصف الإطار
+                                        </span>
+                                    </div>
+
+                                    <!-- Switch Front/Back Camera Button -->
+                                    <button
+                                        type="button"
+                                        onclick="toggleCameraFacingMode()"
+                                        title="تبديل الكاميرا"
+                                        class="absolute top-3 left-3 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition shadow"
+                                    >
+                                        <i class="fa-solid fa-camera-rotate"></i>
+                                    </button>
+                                </div>
+
+                                <div class="mt-4 flex items-center justify-center gap-3 w-full max-w-xs">
+                                    <button
+                                        type="button"
+                                        onclick="captureLiveFrame()"
+                                        class="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition"
+                                    >
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span>التقاط الصورة الآن</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onclick="stopLiveCamera(true)"
+                                        class="py-3 px-4 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition"
+                                    >
+                                        إلغاء
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- State C: Captured Photo Preview -->
+                            <div id="photo-preview-state" class="hidden flex-col sm:flex-row items-center justify-center gap-4 py-2">
+                                <div class="relative">
+                                    <img id="photo-preview-img" src="" alt="معاينة صورة الطالب" class="w-32 h-40 rounded-2xl object-cover border-2 border-emerald-500 shadow-md">
+                                    <span class="absolute -top-2 -right-2 bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs shadow">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
+                                </div>
+                                <div class="text-center sm:text-right">
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        تم التقاط الصورة وتسميتها باسم الطالب
+                                    </span>
+                                    <p id="photo-saved-name-preview" class="text-xs font-extrabold text-blue-700 mt-2 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl"></p>
+                                    <p id="photo-size-info" class="text-[11px] text-slate-500 mt-1"></p>
+                                    <button
+                                        type="button"
+                                        onclick="retakePhoto()"
+                                        class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 bg-white px-3.5 py-2 rounded-xl border border-blue-200 shadow-sm transition"
+                                    >
+                                        <i class="fa-solid fa-rotate-right"></i>
+                                        <span>إعادة التقاط الصورة</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Strict Hardware Camera Fallback (ONLY shown if WebRTC getUserMedia is blocked by older WebView) -->
+                            <div id="camera-fallback-box" class="hidden mt-3 pt-3 border-t border-amber-200 bg-amber-50/70 rounded-2xl p-3 text-center">
+                                <p class="text-xs text-amber-900 font-bold mb-2">
+                                    <i class="fa-solid fa-circle-exclamation ml-1"></i>
+                                    متصفحك الحالي يتطلب فتح تطبيق الكاميرا المباشر للجهاز:
+                                </p>
+                                <input
+                                    type="file"
+                                    id="strict-camera-fallback-input"
+                                    accept="image/*"
+                                    capture="user"
+                                    class="hidden"
+                                >
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('strict-camera-fallback-input').click()"
+                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition"
+                                >
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>فتح كاميرا الهاتف مباشرة</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Guardian Consent & Privacy Notice (required before registration) -->
+                    <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 space-y-2">
+                        <label class="flex items-start gap-2.5 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                id="guardian-consent"
+                                required
+                                class="mt-0.5 w-4 h-4 rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500"
+                            >
+                            <span class="text-[11px] text-emerald-900 leading-relaxed font-medium">
+                                <strong class="font-extrabold">إقرار ولي الأمر:</strong>
+                                أقرّ بأنني ولي أمر الطالب وأوافق على جمع اسمه الرباعي وسنة ميلاده ورقم هاتفي وصورته الشخصية
+                                لغرض التحقق من الهوية وتنظيم بطاقة الطالب المدرسية.
+                            </span>
+                        </label>
+                        <details class="text-[11px] text-emerald-900/90">
+                            <summary class="cursor-pointer font-bold text-emerald-800">سياسة الخصوصية (الغرض، الاطلاع، الحذف)</summary>
+                            <ul class="mt-2 space-y-1 list-disc pr-4 leading-relaxed">
+                                <li><strong>الغرض:</strong> التحقق من هوية الطالب وتنظيم سجلات المدرسة فقط.</li>
+                                <li><strong>من يطّلع:</strong> إدارة المدرسة والمشرفون المصرّح لهم فقط، ولا تُشارك مع أي طرف ثالث.</li>
+                                <li><strong>الاحتفاظ:</strong> حتى نهاية العام الدراسي أو حتى طلب الحذف.</li>
+                                <li><strong>الحذف:</strong> يمكن لولي الأمر طلب حذف البيانات في أي وقت عبر إدارة المدرسة.</li>
+                                <li><strong>الحد الأدنى:</strong> نجمع سنة الميلاد فقط ولا نجمع تاريخ الميلاد الكامل.</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-2">
+                        <button
+                            type="submit"
+                            id="submit-btn"
+                            class="w-full py-3.5 px-6 rounded-2xl tg-button font-bold text-base shadow-lg shadow-blue-600/25 hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2"
+                        >
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>إرسال وحفظ بيانات الطالب</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Student Privacy Notice -->
+            <div class="mt-4 bg-slate-100 border border-slate-200/80 rounded-2xl p-4 flex items-start gap-3">
+                <i class="fa-solid fa-shield-halved text-emerald-600 mt-0.5 text-lg"></i>
+                <div class="text-xs text-slate-600 leading-relaxed">
+                    <span class="font-bold text-slate-800">بياناتك وصورتك محمية وسرية:</span>
+                    يتم إرسال بياناتك وصورتك الملتقطة مباشرة إلى قاعدة البيانات الخاصة بالإدارة فقط، ولا يمكن لأي طالب آخر الاطلاع عليها أو تصفحها.
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Submission Success Card (Shown after student submits) -->
+        <section id="section-student-success" class="hidden animate-fade">
+            <div class="tg-card rounded-3xl shadow-sm border border-emerald-200 p-7 text-center">
+                <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                    <i class="fa-solid fa-check-double"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-slate-800">تم استلام وحفظ بياناتك بنجاح!</h2>
+                <p id="success-student-summary" class="text-sm text-slate-700 mt-2 font-bold"></p>
+                <p id="success-photo-filename" class="text-xs text-blue-700 bg-blue-50 border border-blue-200 inline-block px-3.5 py-1.5 rounded-xl font-bold mt-2"></p>
+                <div class="mt-5 bg-slate-50 rounded-2xl p-4 border border-slate-200/70 max-w-sm mx-auto text-xs text-slate-500">
+                    تم حفظ اسمك الرباعي وسنة ميلادك ورقم هاتف ولي الأمر وصورتك المسماة باسمك في قاعدة بيانات الإدارة بنجاح.
+                </div>
+                <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+                    <button
+                        type="button"
+                        onclick="resetForAnotherStudent()"
+                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-sm transition"
+                    >
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>العودة لاستمارة التسجيل</span>
+                    </button>
+                    <button
+                        type="button"
+                        id="tg-close-app-btn"
+                        onclick="closeTelegramWebApp()"
+                        class="hidden inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-5 py-3 rounded-xl transition"
+                    >
+                        <i class="fa-brands fa-telegram text-sky-600"></i>
+                        <span>إغلاق التطبيق</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: PRIVATE ADMIN DATABASE DASHBOARD (SERVER-VERIFIED ADMIN ONLY) -->
+        <section id="section-browse" class="hidden animate-fade space-y-4">
+
+            <!-- Admin Top Bar -->
+            <div class="bg-slate-900 text-white rounded-3xl p-4 sm:p-5 shadow-md flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-300 flex items-center justify-center">
+                        <i class="fa-solid fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base font-extrabold">لوحة تحكم المشرف الخاصة</h2>
+                            <span id="students-count-badge" class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-full font-extrabold">0</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300 mt-0.5">أنت فقط من يملك صلاحية تصفح صور وبيانات الطلاب</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button
+                        onclick="lockAdminDashboard()"
+                        class="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition"
+                    >
+                        <i class="fa-solid fa-lock"></i>
+                        <span>قفل والعودة لواجهة الطالب</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search, View Mode & Export Bar -->
+            <div class="tg-card rounded-3xl shadow-sm border border-slate-200/80 p-4 sm:p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <button
+                            id="view-mode-cards"
+                            onclick="setAdminLayoutMode('cards')"
+                            class="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition"
+                        >
+                            <i class="fa-solid fa-grip"></i>
+                            <span>بطاقات الصور</span>
+                        </button>
+                        <button
+                            id="view-mode-table"
+                            onclick="setAdminLayoutMode('table')"
+                            class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition"
+                        >
+                            <i class="fa-solid fa-table"></i>
+                            <span>جدول منظم</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button
+                            id="download-all-zip-btn"
+                            onclick="downloadAllPhotosAsZip()"
+                            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-sm transition"
+                        >
+                            <i class="fa-solid fa-file-zipper text-sm"></i>
+                            <span>تحميل الصور بأسماء الطلاب (ZIP)</span>
+                        </button>
+                        <button onclick="exportToCSV()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-sm transition">
+                            <i class="fa-solid fa-file-csv text-sm"></i>
+                            <span>تصدير Excel / CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search & Sort Controls -->
+                <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input
+                            type="text"
+                            id="search-input"
+                            oninput="renderStudentsList()"
+                            placeholder="ابحث بالاسم الرباعي أو رقم هاتف ولي الأمر أو سنة الميلاد..."
+                            class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        >
+                    </div>
+                    <select id="sort-select" onchange="renderStudentsList()" class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="newest">الأحدث تسجيلاً أولاً</option>
+                        <option value="oldest">الأقدم تسجيلاً أولاً</option>
+                        <option value="name">ترتيب أبجدي (الاسم الرباعي)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Students Cards Grid -->
+            <div id="students-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Students Structured Table View -->
+            <div id="students-table-wrapper" class="hidden tg-card rounded-2xl border border-slate-200/80 shadow-sm overflow-x-auto">
+                <table class="w-full text-right border-collapse admin-table">
+                    <thead>
+                        <tr class="bg-slate-800 text-white text-xs font-bold">
+                            <th class="px-3">الصورة</th>
+                            <th class="px-3">الاسم الرباعي للطالب</th>
+                            <th class="px-3">سنة الميلاد</th>
+                            <th class="px-3">رقم هاتف ولي الأمر</th>
+                            <th class="px-3">اسم ملف الصورة المخزون</th>
+                            <th class="px-3">تاريخ التسجيل</th>
+                            <th class="px-3 text-center">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body" class="divide-y divide-slate-200 text-xs text-slate-700">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-database-state" class="hidden tg-card rounded-3xl border border-slate-200/80 p-10 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-folder-open text-2xl"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-700">لا توجد سجلات مطابقة حالياً</h3>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">لم يتم العثور على طلاب مسجلين أو لا توجد نتائج تطابق بحثك الحالي.</p>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- Full-Screen Photo & Student Details Modal (Admin Only) -->
+    <div id="student-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl animate-fade">
+            <div class="relative bg-slate-900 h-72 flex items-center justify-center">
+                <img id="modal-student-photo" src="" alt="صورة الطالب" class="max-h-full max-w-full object-contain">
+                <button onclick="closeStudentModal()" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <a
+                    id="modal-download-photo"
+                    href="#"
+                    download="student_photo.jpg"
+                    class="absolute bottom-3 right-3 bg-white/95 hover:bg-white text-slate-900 text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 transition"
+                >
+                    <i class="fa-solid fa-download text-blue-600"></i>
+                    <span id="modal-download-photo-label">تحميل الصورة باسم الطالب</span>
+                </a>
+            </div>
+            <div class="p-5">
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <span class="text-[11px] text-slate-400 font-bold block">الاسم الرباعي للطالب</span>
+                        <h3 id="modal-student-name" class="text-lg font-extrabold text-slate-800"></h3>
+                    </div>
+                    <span id="modal-student-date" class="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-medium"></span>
+                </div>
+
+                <!-- Stored Photo Filename Badge -->
+                <div class="mt-3 bg-blue-50/80 border border-blue-200/80 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="fa-regular fa-file-image text-blue-600"></i>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-blue-500 font-bold block">اسم ملف الصورة المخزون</span>
+                            <p id="modal-photo-filename" class="text-xs font-extrabold text-blue-900 truncate"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Birth Year Box (سنة الميلاد) -->
+                <div class="mt-3 bg-violet-50/80 border border-violet-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="fa-solid fa-cake-candles text-violet-600"></i>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-violet-500 font-bold block">سنة الميلاد</span>
+                            <p id="modal-student-birth" class="text-sm font-extrabold text-violet-900"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardian Phone Number Box -->
+                <div class="mt-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between gap-2">
+                    <div>
+                        <span class="text-[11px] text-slate-400 font-bold block">رقم هاتف ولي الأمر</span>
+                        <span id="modal-guardian-phone" dir="ltr" class="text-sm font-extrabold text-slate-800 select-all inline-block"></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <a
+                            id="modal-call-guardian"
+                            href="#"
+                            class="text-xs bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-sm"
+                            title="اتصال هاتفي"
+                        >
+                            <i class="fa-solid fa-phone"></i>
+                            <span>اتصال</span>
+                        </a>
+                        <button onclick="copyModalGuardianPhone()" class="text-xs bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-5 flex items-center justify-between gap-3">
+                    <button id="modal-delete-btn" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>حذف السجل</span>
+                    </button>
+                    <button onclick="closeStudentModal()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
+                        إغلاق النافذة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div id="confirm-delete-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl animate-fade">
+            <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-800">تأكيد حذف بيانات الطالب</h3>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">هل أنت متأكد من رغبتك في حذف هذا السجل نهائياً من قاعدة البيانات؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <div class="mt-5 flex items-center gap-2.5">
+                <button id="confirm-delete-yes" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs transition">
+                    نعم، احذف السجل
+                </button>
+                <button onclick="closeConfirmDeleteModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic (Telegram initData + Supabase Edge Functions) -->
+    <script>
+        /* ============================================================
+           1) إعدادات الاتصال بالخادم
+           ------------------------------------------------------------
+           ضع هنا عنوان مشروع Supabase بعد النشر:
+           apiBaseUrl: "https://<project-ref>.supabase.co/functions/v1"
+           لا تضع service_role key هنا إطلاقاً — الواجهة تستخدم initData فقط.
+           ============================================================ */
+        const APP_CONFIG = Object.assign({
+            apiBaseUrl: "https://gjyldmqwzlwbuuorqthc.supabase.co/functions/v1",
+            apiKey: "sb_publishable_6OlMuW-2AKuecHPMS0mmWA_yJsbphVP",
+            functionName: "students"
+        }, window.TADHIYA_CONFIG || {});
+
+        // حدود سنة الميلاد (تُطبَّق أيضاً على الخادم)
+        const CURRENT_YEAR = new Date().getFullYear();
+        const BIRTH_YEAR_MIN = 1990;
+        const BIRTH_YEAR_MAX = CURRENT_YEAR;
+
+        // صورة بديلة عند فشل تحميل صورة الطالب (رابط منتهٍ أو سجل محذوف)
+        const PHOTO_PLACEHOLDER = "https://placehold.co/120x120/e2e8f0/475569?text=Student";
+        window.PHOTO_PLACEHOLDER = PHOTO_PLACEHOLDER;
+
+        // 2. Initialize Telegram Web App SDK & Native Integrations
+        const tg = window.Telegram?.WebApp;
+        let telegramUsername = "مستخدم المتصفح";
+        let telegramUserId = null;
+        let initDataRaw = "";
+
+        // 3. Application State
+        // (يجب تعريفها قبل تهيئة تيليجرام لأن أزرار تيليجرام تقرأها فوراً)
+        let compressedPhotoBase64 = "";
+        let studentsList = [];
+        let pendingDeleteId = null;
+
+        // Live Camera State
+        let mediaStream = null;
+        let currentFacingMode = "user";
+
+        // Admin State (server-verified only, no PIN)
+        let isAdminUnlocked = false;
+        let isAdminVerified = false;
+        let adminLayoutMode = "cards";
+
+        // Haptic feedback helper for Telegram WebApp
+        function haptic(type = 'light') {
+            if (!tg?.HapticFeedback) return;
+            try {
+                if (type === 'light' || type === 'medium' || type === 'heavy') {
+                    tg.HapticFeedback.impactOccurred(type);
+                } else if (type === 'success' || type === 'error' || type === 'warning') {
+                    tg.HapticFeedback.notificationOccurred(type);
+                } else if (type === 'selection') {
+                    tg.HapticFeedback.selectionChanged();
+                }
+            } catch (e) {}
+        }
+        window.haptic = haptic;
+
+        // Telegram Theme synchronization & Native Viewport setup
+        function applyTelegramTheme() {
+            if (!tg) return;
+            const isDark = tg.colorScheme === 'dark';
+            document.body.classList.toggle('tg-dark', isDark);
+
+            try {
+                if (tg.setHeaderColor) tg.setHeaderColor('#1d4ed8');
+                if (tg.setBackgroundColor) tg.setBackgroundColor(isDark ? '#0e1621' : '#f1f5f9');
+            } catch (e) {}
+        }
+
+        // Manage Telegram Native MainButton
+        function updateTelegramMainButton(view = 'register') {
+            if (!tg?.MainButton) return;
+
+            tg.MainButton.offClick?.();
+
+            if (view === 'register') {
+                tg.MainButton.setText("إرسال وحفظ بيانات الطالب");
+                tg.MainButton.setParams?.({ color: '#2563eb', text_color: '#ffffff' });
+                tg.MainButton.show();
+                tg.MainButton.enable();
+                tg.MainButton.onClick(handleMainButtonClick);
+            } else if (view === 'success') {
+                tg.MainButton.setText("تسجيل طالب آخر");
+                tg.MainButton.setParams?.({ color: '#16a34a', text_color: '#ffffff' });
+                tg.MainButton.show();
+                tg.MainButton.enable();
+                tg.MainButton.onClick(resetForAnotherStudent);
+            } else {
+                tg.MainButton.hide();
+            }
+        }
+
+        function handleMainButtonClick() {
+            haptic('light');
+            const form = document.getElementById('student-form');
+            if (form) {
+                if (form.reportValidity()) {
+                    form.requestSubmit();
+                } else {
+                    haptic('error');
+                }
+            }
+        }
+
+        // Manage Telegram Native BackButton
+        function updateTelegramBackButton() {
+            if (!tg?.BackButton) return;
+            tg.BackButton.offClick?.();
+
+            const openModal = ['student-modal', 'confirm-delete-modal'].find(id => {
+                const el = document.getElementById(id);
+                return el && !el.classList.contains('hidden');
+            });
+
+            if (openModal) {
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    haptic('light');
+                    if (openModal === 'student-modal') closeStudentModal();
+                    else closeConfirmDeleteModal();
+                    updateTelegramBackButton();
+                });
+                return;
+            }
+
+            if (isAdminUnlocked) {
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    haptic('light');
+                    lockAdminDashboard();
+                });
+                return;
+            }
+
+            const successView = document.getElementById('section-student-success');
+            if (successView && !successView.classList.contains('hidden')) {
+                tg.BackButton.show();
+                tg.BackButton.onClick(() => {
+                    haptic('light');
+                    resetForAnotherStudent();
+                });
+                return;
+            }
+
+            tg.BackButton.hide();
+        }
+
+        window.closeTelegramWebApp = function() {
+            haptic('light');
+            if (tg?.close) tg.close();
+        };
+
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            try {
+                if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+            } catch (e) {}
+
+            applyTelegramTheme();
+            tg.onEvent?.('themeChanged', applyTelegramTheme);
+
+            initDataRaw = tg.initData || "";
+
+            if (tg.initDataUnsafe?.user) {
+                const u = tg.initDataUnsafe.user;
+                telegramUserId = String(u.id);
+                const fullName = [u.first_name, u.last_name].filter(Boolean).join(" ");
+                telegramUsername = fullName || (u.username ? `@${u.username}` : "مستخدم تيليجرام");
+
+                document.getElementById('tg-user-welcome').textContent = `مرحباً بك يا ${telegramUsername} — صفحة بيانات هوية الطالب`;
+
+                const pill = document.getElementById('tg-app-pill');
+                const unameDisplay = document.getElementById('tg-app-username');
+                if (pill && unameDisplay) {
+                    unameDisplay.textContent = u.username ? `@${u.username}` : (u.first_name || 'تيليجرام');
+                    pill.classList.remove('hidden');
+                    pill.classList.add('flex');
+                }
+            }
+
+            const closeBtn = document.getElementById('tg-close-app-btn');
+            if (closeBtn) closeBtn.classList.remove('hidden');
+
+            updateTelegramMainButton('register');
+            updateTelegramBackButton();
+        }
+
+        // 4. API Helper (all privileged operations go through the Edge Function)
+        class ApiError extends Error {
+            constructor(message, status = 0) {
+                super(message);
+                this.name = 'ApiError';
+                this.status = status;
+            }
+        }
+
+        function isBackendConfigured() {
+            return /^https?:\/\//i.test(String(APP_CONFIG.apiBaseUrl || ''));
+        }
+
+        function buildApiUrl(query = '') {
+            const base = String(APP_CONFIG.apiBaseUrl).replace(/\/+$/, '');
+            const fn = String(APP_CONFIG.functionName || 'students').replace(/^\/+/, '');
+            return `${base}/${fn}${query ? `?${query}` : ''}`;
+        }
+
+        async function apiFetch(query = '', options = {}) {
+            if (!isBackendConfigured()) {
+                throw new ApiError('لم يتم إعداد الخادم بعد. يرجى ضبط apiBaseUrl في إعدادات الصفحة.', 0);
+            }
+            if (!initDataRaw) {
+                throw new ApiError('يجب فتح هذه الصفحة من داخل تيليجرام حتى يتم التحقق من هويتك.', 401);
+            }
+
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 25000);
+
+            try {
+                const response = await fetch(buildApiUrl(query), {
+                    ...options,
+                    headers: Object.assign({
+                        'Authorization': `tma ${initDataRaw}`,
+                        'X-Telegram-Init-Data': initDataRaw
+                    }, APP_CONFIG.apiKey ? { 'apikey': APP_CONFIG.apiKey } : {}, options.body ? { 'Content-Type': 'application/json' } : {}, options.headers || {}),
+                    signal: controller.signal
+                });
+
+                let payload = null;
+                try {
+                    payload = await response.json();
+                } catch (e) {
+                    payload = null;
+                }
+
+                if (!response.ok) {
+                    const message = (payload && payload.error) || defaultErrorMessage(response.status);
+                    throw new ApiError(message, response.status);
+                }
+                return payload;
+            } catch (err) {
+                if (err instanceof ApiError) throw err;
+                if (err?.name === 'AbortError') {
+                    throw new ApiError('انتهت مهلة الاتصال بالخادم، تحقق من الشبكة وحاول مجدداً.', 0);
+                }
+                throw new ApiError('تعذر الاتصال بالخادم، تحقق من الإنترنت وحاول مجدداً.', 0);
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function defaultErrorMessage(status) {
+            if (status === 401) return 'جلسة تيليجرام غير صالحة أو منتهية. أعد فتح التطبيق من البوت.';
+            if (status === 403) return 'هذا الإجراء مخصص لمشرف المدرسة فقط.';
+            if (status === 404) return 'الخدمة غير متوفرة على الخادم (قد لم تُنشر دالة students بعد).';
+            if (status === 413) return 'حجم الصورة أكبر من الحد المسموح.';
+            if (status === 429) return 'عدد المحاولات كبير، يرجى الانتظار قليلاً ثم المحاولة مجدداً.';
+            if (status >= 500) return 'حدث خطأ في الخادم، يرجى المحاولة لاحقاً.';
+            return 'تعذر تنفيذ الطلب، يرجى المحاولة مرة أخرى.';
+        }
+
+        function setDbStatus(state) {
+            const dot = document.getElementById('db-status-dot');
+            const text = document.getElementById('db-status-text');
+            if (!dot || !text) return;
+
+            const states = {
+                connecting: ['bg-amber-400 animate-pulse', 'جاري الاتصال...'],
+                online: ['bg-emerald-400', 'متصل بالخادم'],
+                offline: ['bg-slate-400', 'الخادم غير مُعد'],
+                telegram: ['bg-amber-400', 'افتح من داخل تيليجرام'],
+                unauthorized: ['bg-amber-400', 'دخول المشرف فقط'],
+                error: ['bg-rose-400', 'خطأ في الاتصال']
+            };
+            const [dotClass, label] = states[state] || states.connecting;
+            dot.className = `w-2 h-2 rounded-full ${dotClass}`;
+            text.textContent = label;
+        }
+
+        // 5. UI Helper Functions
+        window.showToast = function(message, type = 'success') {
+            const banner = document.getElementById('toast-banner');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-message');
+
+            banner.className = "mb-4 p-4 rounded-2xl shadow-sm border flex items-center justify-between gap-3 animate-fade ";
+            if (type === 'success') {
+                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                icon.className = "fa-solid fa-circle-check text-xl text-emerald-600";
+            } else if (type === 'error') {
+                banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                icon.className = "fa-solid fa-circle-exclamation text-xl text-rose-600";
+            } else {
+                banner.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
+                icon.className = "fa-solid fa-circle-info text-xl text-blue-600";
+            }
+
+            msg.textContent = message;
+            banner.classList.remove('hidden');
+
+            haptic(type === 'error' ? 'error' : (type === 'info' ? 'light' : 'success'));
+
+            setTimeout(() => banner.classList.add('hidden'), 4500);
+        };
+
+        window.hideToast = function() {
+            document.getElementById('toast-banner').classList.add('hidden');
+        };
+
+        // Helper: Sanitize Student Quadruple Name into a Valid Filename "[الاسم الرباعي].jpg"
+        function buildStudentPhotoFilename(quadName) {
+            const cleaned = String(quadName || '')
+                .trim()
+                .replace(/\s+/g, ' ')
+                .replace(/[\\/:*?"<>|]/g, '');
+            return (cleaned || 'صورة_طالب') + '.jpg';
+        }
+
+        // Helper: Display birth year only (no full date is stored or shown)
+        function formatBirthYearDisplay(value) {
+            const year = Number(value);
+            if (!Number.isInteger(year) || year < 1900 || year > 2200) return 'غير محدد';
+            return String(year);
+        }
+
+        // Helper: Validate & Give Live Feedback on Quadruple Name Input (الاسم الرباعي)
+        window.handleQuadNameInput = function() {
+            const rawValue = document.getElementById('student-name').value;
+            const parts = rawValue.trim().split(/\s+/).filter(Boolean);
+            const badge = document.getElementById('quad-name-badge');
+            const hint = document.getElementById('quad-name-hint');
+            const filenameBadge = document.getElementById('photo-filename-live-badge');
+            const filenameText = document.getElementById('photo-filename-live-text');
+            const previewSavedName = document.getElementById('photo-saved-name-preview');
+
+            const count = parts.length;
+            badge.textContent = `${count} / 4 مقاطع`;
+
+            if (count >= 4) {
+                if (!badge.dataset.completed) {
+                    badge.dataset.completed = "true";
+                    haptic('light');
+                }
+                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 transition";
+                hint.textContent = "الاسم الرباعي مكتمل بشكل صحيح ✓";
+                hint.className = "text-[11px] text-emerald-600 font-bold";
+            } else if (count > 0) {
+                delete badge.dataset.completed;
+                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 transition";
+                hint.textContent = `يرجى إكمال الاسم الرباعي (متبقي ${4 - count} ${4 - count === 1 ? 'اسم' : 'أسماء'})`;
+                hint.className = "text-[11px] text-amber-600 font-medium";
+            } else {
+                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 transition";
+                hint.textContent = "يرجى كتابة الاسم الرباعي الكامل كما في الهوية الرسمية";
+                hint.className = "text-[11px] text-slate-500";
+            }
+
+            if (count > 0) {
+                const generatedFilename = buildStudentPhotoFilename(rawValue);
+                filenameBadge.classList.remove('hidden');
+                filenameText.textContent = generatedFilename;
+                if (previewSavedName) {
+                    previewSavedName.textContent = `سيتم خزن الصورة باسم: ${generatedFilename}`;
+                }
+            } else {
+                filenameBadge.classList.add('hidden');
+                if (previewSavedName) {
+                    previewSavedName.textContent = `سيتم خزن الصورة باسم الطالب الرباعي تلقائياً`;
+                }
+            }
+        };
+
+        // 6. STRICT LIVE CAMERA CAPTURE LOGIC (WebRTC getUserMedia)
+        window.startLiveCamera = async function() {
+            haptic('light');
+            const idleState = document.getElementById('camera-idle-state');
+            const streamState = document.getElementById('camera-stream-state');
+            const previewState = document.getElementById('photo-preview-state');
+            const fallbackBox = document.getElementById('camera-fallback-box');
+            const videoEl = document.getElementById('live-camera-video');
+
+            stopLiveCamera(false);
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                fallbackBox.classList.remove('hidden');
+                showToast('يرجى استخدام زر فتح كاميرا الهاتف المباشرة أدناه', 'info');
+                return;
+            }
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: currentFacingMode },
+                        width: { ideal: 720 },
+                        height: { ideal: 960 }
+                    },
+                    audio: false
+                });
+
+                videoEl.srcObject = mediaStream;
+                videoEl.classList.toggle('mirror-video', currentFacingMode === 'user');
+
+                await videoEl.play();
+
+                idleState.classList.add('hidden');
+                previewState.classList.add('hidden');
+                fallbackBox.classList.add('hidden');
+                streamState.classList.remove('hidden');
+                streamState.classList.add('flex');
+            } catch (err) {
+                console.error("Live camera error:", err);
+                fallbackBox.classList.remove('hidden');
+                showToast('تعذر الوصول المباشر للكاميرا، يرجى السماح بصلاحية الكاميرا أو استخدام زر الكاميرا البديل', 'error');
+            }
+        };
+
+        window.toggleCameraFacingMode = function() {
+            haptic('light');
+            currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+            startLiveCamera();
+        };
+
+        window.stopLiveCamera = function(returnToIdle = false) {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            const videoEl = document.getElementById('live-camera-video');
+            if (videoEl) videoEl.srcObject = null;
+
+            const streamState = document.getElementById('camera-stream-state');
+            streamState.classList.add('hidden');
+            streamState.classList.remove('flex');
+
+            if (returnToIdle && !compressedPhotoBase64) {
+                document.getElementById('camera-idle-state').classList.remove('hidden');
+            }
+        };
+
+        window.captureLiveFrame = function() {
+            const videoEl = document.getElementById('live-camera-video');
+            if (!videoEl || !videoEl.videoWidth) {
+                showToast('الكاميرا غير جاهزة بعد، انتظر لحظة ثم حاول مجدداً', 'error');
+                return;
+            }
+
+            const maxDimension = 550;
+            let width = videoEl.videoWidth;
+            let height = videoEl.videoHeight;
+
+            if (width > height) {
+                if (width > maxDimension) {
+                    height = Math.round((height * maxDimension) / width);
+                    width = maxDimension;
+                }
+            } else {
+                if (height > maxDimension) {
+                    width = Math.round((width * maxDimension) / height);
+                    height = maxDimension;
+                }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, width, height);
+
+            if (currentFacingMode === 'user') {
+                ctx.translate(width, 0);
+                ctx.scale(-1, 1);
+            }
+
+            ctx.drawImage(videoEl, 0, 0, width, height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+            compressedPhotoBase64 = dataUrl;
+
+            stopLiveCamera(false);
+
+            document.getElementById('camera-idle-state').classList.add('hidden');
+            const previewState = document.getElementById('photo-preview-state');
+            previewState.classList.remove('hidden');
+            previewState.classList.add('flex');
+            document.getElementById('photo-preview-img').src = dataUrl;
+
+            const currentNameVal = document.getElementById('student-name').value.trim();
+            const photoFilename = buildStudentPhotoFilename(currentNameVal || 'الاسم الرباعي للطالب');
+            document.getElementById('photo-saved-name-preview').textContent = `اسم ملف الصورة: ${photoFilename}`;
+
+            const approxKb = Math.round((dataUrl.length * 3) / 4 / 1024);
+            document.getElementById('photo-size-info').textContent = `صورة كاميرا حية موثقة (~${approxKb} كيلوبايت)`;
+
+            haptic('medium');
+        };
+
+        window.retakePhoto = function() {
+            haptic('light');
+            compressedPhotoBase64 = "";
+            document.getElementById('photo-preview-state').classList.add('hidden');
+            document.getElementById('photo-preview-state').classList.remove('flex');
+            startLiveCamera();
+        };
+
+        function resetPhotoPreview() {
+            stopLiveCamera(false);
+            compressedPhotoBase64 = "";
+            const fallbackInput = document.getElementById('strict-camera-fallback-input');
+            if (fallbackInput) fallbackInput.value = "";
+            document.getElementById('camera-idle-state').classList.remove('hidden');
+            document.getElementById('photo-preview-state').classList.add('hidden');
+            document.getElementById('photo-preview-state').classList.remove('flex');
+            document.getElementById('photo-preview-img').src = "";
+        }
+
+        // Strict Fallback Hardware Camera Input Handler (only when WebRTC is blocked)
+        const strictFallbackInput = document.getElementById('strict-camera-fallback-input');
+        strictFallbackInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const compressedDataUrl = await compressImageFile(file, 550, 0.72);
+                compressedPhotoBase64 = compressedDataUrl;
+
+                document.getElementById('camera-idle-state').classList.add('hidden');
+                const previewState = document.getElementById('photo-preview-state');
+                previewState.classList.remove('hidden');
+                previewState.classList.add('flex');
+                document.getElementById('photo-preview-img').src = compressedDataUrl;
+
+                const currentNameVal = document.getElementById('student-name').value.trim();
+                const photoFilename = buildStudentPhotoFilename(currentNameVal || 'الاسم الرباعي للطالب');
+                document.getElementById('photo-saved-name-preview').textContent = `اسم ملف الصورة: ${photoFilename}`;
+
+                const approxKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
+                document.getElementById('photo-size-info').textContent = `تم التقاط وضغط الصورة (~${approxKb} كيلوبايت)`;
+            } catch (err) {
+                console.error("Fallback image error:", err);
+                showToast('حدث خطأ أثناء معالجة الصورة الملتقطة', 'error');
+            }
+        });
+
+        function compressImageFile(file, maxDimension = 550, quality = 0.72) {
+            return new Promise((resolve, reject) => {
+                if (!file.type || !file.type.startsWith('image/')) {
+                    reject(new Error('not an image'));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxDimension) {
+                                height = Math.round((height * maxDimension) / width);
+                                width = maxDimension;
+                            }
+                        } else {
+                            if (height > maxDimension) {
+                                width = Math.round((width * maxDimension) / height);
+                                height = maxDimension;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = "#FFFFFF";
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 7. ADMIN ACCESS — verified on the server via Telegram initData (no PIN)
+        async function refreshAdminStatus() {
+            if (!isBackendConfigured() || !initDataRaw) {
+                setDbStatus(isBackendConfigured() ? 'unauthorized' : 'offline');
+                return false;
+            }
+
+            try {
+                const data = await apiFetch('action=whoami');
+                isAdminVerified = Boolean(data && data.isAdmin);
+                setDbStatus('online');
+                return isAdminVerified;
+            } catch (err) {
+                console.error("Admin status check failed:", err);
+                isAdminVerified = false;
+                setDbStatus(err.status === 403 ? 'unauthorized' : (err.status === 401 ? 'unauthorized' : 'error'));
+                return false;
+            }
+        }
+
+        window.handleAdminButtonClick = async function() {
+            haptic('light');
+
+            if (isAdminUnlocked) {
+                lockAdminDashboard();
+                return;
+            }
+
+            if (!initDataRaw) {
+                showToast('يجب فتح الصفحة من داخل تيليجرام للتحقق من صلاحية المشرف.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('admin-access-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amber-300"></i><span>جاري التحقق...</span>`;
+
+            try {
+                const isAdmin = await refreshAdminStatus();
+                if (isAdmin) {
+                    await unlockAdminDashboard();
+                } else {
+                    haptic('error');
+                    showToast('هذه اللوحة مخصصة لمشرف المدرسة فقط. تم رفض الوصول.', 'error');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        };
+
+        async function unlockAdminDashboard() {
+            isAdminUnlocked = true;
+            stopLiveCamera(false);
+
+            document.getElementById('section-register').classList.add('hidden');
+            document.getElementById('section-student-success').classList.add('hidden');
+            document.getElementById('section-browse').classList.remove('hidden');
+
+            document.getElementById('admin-lock-icon').className = "fa-solid fa-unlock text-emerald-300";
+            document.getElementById('admin-lock-label').textContent = "خروج المشرف";
+
+            updateTelegramMainButton('admin');
+            updateTelegramBackButton();
+            haptic('success');
+
+            await loadStudents();
+
+            showToast('تم فتح لوحة تحكم المشرف بنجاح', 'success');
+        }
+
+        async function loadStudents() {
+            if (!isAdminUnlocked) return;
+
+            try {
+                const data = await apiFetch('');
+                studentsList = Array.isArray(data?.students) ? data.students : [];
+                document.getElementById('students-count-badge').textContent = studentsList.length;
+                setDbStatus('online');
+                renderStudentsList();
+            } catch (err) {
+                console.error("Load students failed:", err);
+                haptic('error');
+                if (err.status === 403 || err.status === 401) {
+                    showToast('انتهت أو انعدمت صلاحية المشرف، سيتم قفل اللوحة.', 'error');
+                    lockAdminDashboard();
+                } else {
+                    showToast(err.message || 'تعذر جلب البيانات من الخادم', 'error');
+                    setDbStatus('error');
+                }
+            }
+        }
+
+        window.lockAdminDashboard = function() {
+            isAdminUnlocked = false;
+            studentsList = [];
+
+            document.getElementById('section-browse').classList.add('hidden');
+            document.getElementById('section-register').classList.remove('hidden');
+
+            document.getElementById('admin-lock-icon').className = "fa-solid fa-lock text-amber-300";
+            document.getElementById('admin-lock-label').textContent = "الإدارة";
+
+            updateTelegramMainButton('register');
+            updateTelegramBackButton();
+            haptic('light');
+            showToast('تم قفل لوحة المشرف والعودة لواجهة الطالب', 'info');
+        };
+
+        window.setAdminLayoutMode = function(mode) {
+            haptic('selection');
+            adminLayoutMode = mode;
+            const btnCards = document.getElementById('view-mode-cards');
+            const btnTable = document.getElementById('view-mode-table');
+
+            if (mode === 'cards') {
+                btnCards.className = "inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition";
+                btnTable.className = "inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition";
+            } else {
+                btnTable.className = "inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition";
+                btnCards.className = "inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition";
+            }
+            renderStudentsList();
+        };
+
+        // Birth year input constraints (max is the current year, never a full date)
+        const birthYearInput = document.getElementById('student-birth-year');
+        birthYearInput.min = String(BIRTH_YEAR_MIN);
+        birthYearInput.max = String(BIRTH_YEAR_MAX);
+        document.getElementById('birth-year-hint').textContent =
+            `أدخل سنة الميلاد فقط بأربعة أرقام (من ${BIRTH_YEAR_MIN} إلى ${BIRTH_YEAR_MAX}) — لا نجمع تاريخ الميلاد الكامل`;
+
+        // 8. Student Form Submission Handler
+        const studentForm = document.getElementById('student-form');
+        studentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const rawName = document.getElementById('student-name').value.trim().replace(/\s+/g, ' ');
+            const guardianPhone = document.getElementById('guardian-phone').value.trim();
+            const birthYearRaw = birthYearInput.value.trim();
+
+            // Validate Quadruple Name (at least 4 parts)
+            const nameParts = rawName.split(' ').filter(Boolean);
+            if (nameParts.length < 4) {
+                haptic('error');
+                showToast('يرجى كتابة الاسم الرباعي الكامل للطالب (4 أسماء على الأقل)', 'error');
+                document.getElementById('student-name').focus();
+                return;
+            }
+
+            // Validate Birth Year (four digits, inside the allowed range)
+            if (!/^\d{4}$/.test(birthYearRaw)) {
+                haptic('error');
+                showToast('يرجى إدخال سنة الميلاد بأربعة أرقام فقط (مثال: 2008)', 'error');
+                birthYearInput.focus();
+                return;
+            }
+
+            const birthYear = Number(birthYearRaw);
+            if (birthYear < BIRTH_YEAR_MIN || birthYear > BIRTH_YEAR_MAX) {
+                haptic('error');
+                showToast(`سنة الميلاد يجب أن تكون بين ${BIRTH_YEAR_MIN} و ${BIRTH_YEAR_MAX}`, 'error');
+                birthYearInput.focus();
+                return;
+            }
+
+            // Validate Guardian Phone Number
+            const digitsOnly = guardianPhone.replace(/\D/g, '');
+            if (digitsOnly.length < 10) {
+                haptic('error');
+                showToast('يرجى إدخال رقم هاتف ولي الأمر بشكل صحيح (10 أرقام على الأقل)', 'error');
+                document.getElementById('guardian-phone').focus();
+                return;
+            }
+
+            // Guardian consent is required
+            const consent = document.getElementById('guardian-consent');
+            if (!consent.checked) {
+                haptic('error');
+                showToast('يجب تأكيد موافقة ولي الأمر قبل إرسال البيانات', 'error');
+                consent.focus();
+                return;
+            }
+
+            if (!compressedPhotoBase64) {
+                haptic('error');
+                showToast('يجب تشغيل الكاميرا والتقاط صورة الطالب الشخصية أولاً', 'error');
+                return;
+            }
+
+            const photoFileName = buildStudentPhotoFilename(rawName);
+            const submitBtn = document.getElementById('submit-btn');
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري حفظ البيانات والصورة باسم الطالب...</span>`;
+
+            if (tg?.MainButton) {
+                tg.MainButton.showProgress();
+                tg.MainButton.disable();
+            }
+
+            try {
+                await apiFetch('', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        studentName: rawName,
+                        birthYear: birthYear,
+                        guardianPhone: guardianPhone,
+                        photoFileName: photoFileName,
+                        photoBase64: compressedPhotoBase64,
+                        captureMethod: 'live_camera'
+                    })
+                });
+
+                studentForm.reset();
+                handleQuadNameInput();
+                resetPhotoPreview();
+
+                document.getElementById('section-register').classList.add('hidden');
+                document.getElementById('section-student-success').classList.remove('hidden');
+                document.getElementById('success-student-summary').textContent =
+                    `الاسم الرباعي: ${rawName} — سنة الميلاد: ${birthYear} — هاتف ولي الأمر: ${guardianPhone}`;
+                document.getElementById('success-photo-filename').innerHTML =
+                    `<i class="fa-regular fa-file-image ml-1"></i> تم حفظ الصورة باسم: ${escapeHtml(photoFileName)}`;
+
+                updateTelegramMainButton('success');
+                updateTelegramBackButton();
+                haptic('success');
+
+                showToast(`تم حفظ بياناتك وصورتك باسم (${photoFileName}) بنجاح!`, 'success');
+            } catch (error) {
+                console.error("Error saving student:", error);
+                haptic('error');
+                showToast(error.message || 'حدث خطأ أثناء حفظ البيانات، يرجى المحاولة مرة أخرى', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+                if (tg?.MainButton) {
+                    tg.MainButton.hideProgress();
+                    tg.MainButton.enable();
+                }
+            }
+        });
+
+        window.resetForAnotherStudent = function() {
+            haptic('light');
+            document.getElementById('section-student-success').classList.add('hidden');
+            document.getElementById('section-register').classList.remove('hidden');
+            updateTelegramMainButton('register');
+            updateTelegramBackButton();
+        };
+
+        // 9. Render & Filter Students in Admin Browse View
+        window.renderStudentsList = function() {
+            if (!isAdminUnlocked) return;
+
+            const cardsContainer = document.getElementById('students-container');
+            const tableWrapper = document.getElementById('students-table-wrapper');
+            const tableBody = document.getElementById('students-table-body');
+            const emptyState = document.getElementById('empty-database-state');
+
+            const searchQuery = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+            const sortBy = document.getElementById('sort-select')?.value || 'newest';
+
+            let filtered = studentsList.filter(item => {
+                const nameMatch = (item.studentName || '').toLowerCase().includes(searchQuery);
+                const phoneVal = item.guardianPhone || '';
+                const phoneMatch = phoneVal.toLowerCase().includes(searchQuery);
+                const fileMatch = (item.photoFileName || '').toLowerCase().includes(searchQuery);
+                const birthMatch = String(item.birthYear || '').includes(searchQuery);
+                return nameMatch || phoneMatch || fileMatch || birthMatch;
+            });
+
+            filtered.sort((a, b) => {
+                if (sortBy === 'newest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                if (sortBy === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                if (sortBy === 'name') return (a.studentName || '').localeCompare(b.studentName || '', 'ar');
+                return 0;
+            });
+
+            cardsContainer.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                cardsContainer.classList.add('hidden');
+                tableWrapper.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            if (adminLayoutMode === 'cards') {
+                cardsContainer.classList.remove('hidden');
+                tableWrapper.classList.add('hidden');
+            } else {
+                cardsContainer.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+            }
+
+            filtered.forEach((student) => {
+                const guardianPhone = student.guardianPhone || 'غير متوفر';
+                const storedPhotoFilename = student.photoFileName || buildStudentPhotoFilename(student.studentName);
+                const photoUrl = student.photoUrl || PHOTO_PLACEHOLDER;
+
+                const dateFormatted = student.createdAt
+                    ? new Date(student.createdAt).toLocaleDateString('ar-IQ', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                      })
+                    : 'الآن';
+
+                // Render Card Item
+                const card = document.createElement('div');
+                card.className = "tg-card rounded-2xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center gap-3.5 cursor-pointer";
+                card.onclick = () => openStudentModal(student.id);
+
+                const imgEl = document.createElement('img');
+                imgEl.src = photoUrl;
+                imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = PHOTO_PLACEHOLDER; };
+                imgEl.alt = storedPhotoFilename;
+                imgEl.title = storedPhotoFilename;
+                imgEl.loading = 'lazy';
+                imgEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 flex-shrink-0 bg-slate-100";
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = "flex-1 min-w-0";
+
+                const nameEl = document.createElement('h4');
+                nameEl.className = "font-extrabold text-slate-800 text-sm sm:text-base truncate";
+                nameEl.textContent = student.studentName;
+
+                const numBadge = document.createElement('div');
+                numBadge.className = "inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-xs px-2.5 py-0.5 rounded-lg";
+                numBadge.innerHTML = `<i class="fa-solid fa-phone text-[11px]"></i> <span dir="ltr">${escapeHtml(guardianPhone)}</span>`;
+
+                const birthBadge = document.createElement('div');
+                birthBadge.className = "inline-flex items-center gap-1.5 bg-violet-50 text-violet-700 font-bold text-xs px-2.5 py-0.5 rounded-lg";
+                birthBadge.innerHTML = `<i class="fa-solid fa-cake-candles text-[11px]"></i> <span>سنة الميلاد: ${escapeHtml(formatBirthYearDisplay(student.birthYear))}</span>`;
+
+                const badgesRow = document.createElement('div');
+                badgesRow.className = "flex flex-wrap items-center gap-1.5 mt-1";
+                badgesRow.appendChild(numBadge);
+                badgesRow.appendChild(birthBadge);
+
+                const metaRow = document.createElement('div');
+                metaRow.className = "flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-1.5 border-t border-slate-100 gap-2";
+                metaRow.innerHTML = `
+                    <span class="truncate text-emerald-700 font-bold" title="${escapeHtml(storedPhotoFilename)}">
+                        <i class="fa-regular fa-file-image ml-1"></i>${escapeHtml(storedPhotoFilename)}
+                    </span>
+                    <span class="flex-shrink-0">${dateFormatted}</span>
+                `;
+
+                infoDiv.appendChild(nameEl);
+                infoDiv.appendChild(badgesRow);
+                infoDiv.appendChild(metaRow);
+
+                card.appendChild(imgEl);
+                card.appendChild(infoDiv);
+                cardsContainer.appendChild(card);
+
+                // Render Structured Table Row
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-blue-50/50 transition cursor-pointer";
+                tr.onclick = () => openStudentModal(student.id);
+                tr.innerHTML = `
+                    <td class="px-3 py-1">
+                        <img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(storedPhotoFilename)}" loading="lazy" onerror="this.onerror=null;this.src=window.PHOTO_PLACEHOLDER" class="w-7 h-7 rounded-lg object-cover border border-slate-200">
+                    </td>
+                    <td class="px-3 font-bold text-slate-800 truncate max-w-[180px]">${escapeHtml(student.studentName)}</td>
+                    <td class="px-3 font-bold text-violet-700 whitespace-nowrap">${escapeHtml(formatBirthYearDisplay(student.birthYear))}</td>
+                    <td class="px-3 font-bold text-blue-700" dir="ltr">${escapeHtml(guardianPhone)}</td>
+                    <td class="px-3 text-emerald-700 font-bold truncate max-w-[160px]">${escapeHtml(storedPhotoFilename)}</td>
+                    <td class="px-3 text-slate-400 text-[11px]">${dateFormatted}</td>
+                    <td class="px-3 text-center">
+                        <button class="text-blue-600 hover:text-blue-800 font-bold">عرض / تحميل</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        };
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 10. Student Modal Inspection, Photo Download & Deletion (Admin Only)
+        window.openStudentModal = function(studentId) {
+            if (!isAdminUnlocked) return;
+            const student = studentsList.find(s => s.id === studentId);
+            if (!student) return;
+
+            haptic('selection');
+            const guardianPhone = student.guardianPhone || '';
+            const exactPhotoFilename = student.photoFileName || buildStudentPhotoFilename(student.studentName);
+
+            const modalPhotoEl = document.getElementById('modal-student-photo');
+            modalPhotoEl.onerror = () => { modalPhotoEl.onerror = null; modalPhotoEl.src = PHOTO_PLACEHOLDER; };
+            modalPhotoEl.src = student.photoUrl || PHOTO_PLACEHOLDER;
+            document.getElementById('modal-student-name').textContent = student.studentName;
+            document.getElementById('modal-student-birth').textContent = formatBirthYearDisplay(student.birthYear);
+            document.getElementById('modal-guardian-phone').textContent = guardianPhone;
+            document.getElementById('modal-photo-filename').textContent = exactPhotoFilename;
+            document.getElementById('modal-call-guardian').href = `tel:${guardianPhone}`;
+
+            const downloadLink = document.getElementById('modal-download-photo');
+            downloadLink.href = student.photoUrl || '#';
+            downloadLink.download = exactPhotoFilename;
+            downloadLink.onclick = (event) => {
+                event.preventDefault();
+                downloadStudentPhoto(student.id);
+            };
+            document.getElementById('modal-download-photo-label').textContent = `تحميل (${exactPhotoFilename})`;
+
+            const dateFormatted = student.createdAt
+                ? new Date(student.createdAt).toLocaleDateString('ar-IQ', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                  })
+                : '';
+            document.getElementById('modal-student-date').textContent = dateFormatted;
+
+            const delBtn = document.getElementById('modal-delete-btn');
+            delBtn.onclick = () => promptDeleteStudent(student.id);
+
+            const modal = document.getElementById('student-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            updateTelegramBackButton();
+        };
+
+        window.closeStudentModal = function() {
+            haptic('light');
+            const modal = document.getElementById('student-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            updateTelegramBackButton();
+        };
+
+        window.copyModalGuardianPhone = function() {            haptic('light');
+            const numText = document.getElementById('modal-guardian-phone').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = numText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(`تم نسخ رقم هاتف ولي الأمر (${numText}) إلى الحافظة`, 'info');
+        };
+
+        // Photo URLs are cross-origin, so fetch the blob first to force the student-name filename
+        async function downloadStudentPhoto(studentId) {
+            const student = studentsList.find(s => s.id === studentId);
+            if (!student || !student.photoUrl) {
+                showToast('رابط الصورة غير متوفر، أعد تحديث القائمة.', 'error');
+                return;
+            }
+
+            haptic('light');
+            try {
+                const response = await fetch(student.photoUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = objectUrl;
+                link.download = student.photoFileName || buildStudentPhotoFilename(student.studentName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+            } catch (err) {
+                console.error("Photo download failed:", err);
+                showToast('تعذر تحميل الصورة، تحقق من الاتصال وحاول مجدداً.', 'error');
+            }
+        }
+
+        async function executeDeleteStudent(studentId) {
+            if (!studentId) return;
+            try {
+                await apiFetch(`id=${encodeURIComponent(studentId)}`, { method: 'DELETE' });
+                studentsList = studentsList.filter(s => s.id !== studentId);
+                document.getElementById('students-count-badge').textContent = studentsList.length;
+                renderStudentsList();
+                closeConfirmDeleteModal();
+                closeStudentModal();
+                showToast('تم حذف سجل الطالب وصورته من قاعدة البيانات', 'info');
+                haptic('success');
+            } catch (err) {
+                console.error("Error deleting student:", err);
+                showToast(err.message || 'تعذر حذف السجل، حاول مرة أخرى', 'error');
+                haptic('error');
+            } finally {
+                pendingDeleteId = null;
+            }
+        }
+
+        function promptDeleteStudent(studentId) {
+            haptic('warning');
+            pendingDeleteId = studentId;
+
+            if (tg?.showConfirm) {
+                tg.showConfirm('هل أنت متأكد من رغبتك في حذف هذا السجل نهائياً من قاعدة البيانات؟', async (confirmed) => {
+                    if (confirmed) {
+                        await executeDeleteStudent(studentId);
+                    } else {
+                        pendingDeleteId = null;
+                    }
+                });
+                return;
+            }
+
+            const confirmModal = document.getElementById('confirm-delete-modal');
+            confirmModal.classList.remove('hidden');
+            confirmModal.classList.add('flex');
+            updateTelegramBackButton();
+        }
+
+        window.closeConfirmDeleteModal = function() {
+            haptic('light');
+            pendingDeleteId = null;
+            const confirmModal = document.getElementById('confirm-delete-modal');
+            confirmModal.classList.add('hidden');
+            confirmModal.classList.remove('flex');
+            updateTelegramBackButton();
+        };
+
+        document.getElementById('confirm-delete-yes').addEventListener('click', async () => {
+            if (!pendingDeleteId) return;
+
+            const btn = document.getElementById('confirm-delete-yes');
+            btn.disabled = true;
+            btn.textContent = "جاري الحذف...";
+
+            await executeDeleteStudent(pendingDeleteId);
+
+            btn.disabled = false;
+            btn.textContent = "نعم، احذف السجل";
+        });
+
+        // 11. Download All Student Photos Named by Student Quadruple Name as a Single ZIP Archive
+        window.downloadAllPhotosAsZip = async function() {
+            haptic('medium');
+            if (!isAdminUnlocked) return;
+            if (studentsList.length === 0) {
+                showToast('لا توجد صور طلاب لتحميلها حالياً', 'error');
+                return;
+            }
+            if (typeof JSZip === 'undefined') {
+                showToast('مكتبة ضغط الملفات غير جاهزة، يرجى التحقق من الاتصال', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('download-all-zip-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري تجهيز الصور بأسماء الطلاب...</span>`;
+
+            try {
+                const zip = new JSZip();
+                const folder = zip.folder("صور_الطلاب_بأسمائهم");
+                const usedFilenames = {};
+
+                for (const student of studentsList) {
+                    if (!student.photoUrl) continue;
+
+                    let baseName = String(student.studentName || 'طالب')
+                        .trim()
+                        .replace(/\s+/g, ' ')
+                        .replace(/[\\/:*?"<>|]/g, '');
+                    if (!baseName) baseName = 'طالب';
+
+                    let finalFilename = `${baseName}.jpg`;
+                    if (usedFilenames[finalFilename]) {
+                        usedFilenames[finalFilename] += 1;
+                        finalFilename = `${baseName} (${usedFilenames[finalFilename]}).jpg`;
+                    } else {
+                        usedFilenames[finalFilename] = 1;
+                    }
+
+                    try {
+                        const response = await fetch(student.photoUrl);
+                        if (!response.ok) continue;
+                        const blob = await response.blob();
+                        folder.file(finalFilename, blob);
+                    } catch (e) {
+                        console.error("Photo fetch failed:", student.id, e);
+                    }
+                }
+
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                const url = URL.createObjectURL(zipBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `صور_الطلاب_بأسمائهم_${new Date().toISOString().slice(0, 10)}.zip`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                showToast('تم تحميل أرشيف (ZIP) يحتوي على صور الطلاب مسماة بأسمائهم الرباعية!', 'success');
+            } catch (err) {
+                console.error("ZIP generation error:", err);
+                showToast('حدث خطأ أثناء تجهيز ملف الصور المضغوط', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        };
+
+        // 12. Export Database to Excel-Compatible UTF-8 CSV (Birth Year Only)
+        window.exportToCSV = function() {
+            haptic('medium');
+            if (studentsList.length === 0) {
+                showToast('لا توجد بيانات لتصديرها حالياً', 'error');
+                return;
+            }
+
+            const headers = ['الاسم الرباعي للطالب', 'سنة الميلاد', 'رقم هاتف ولي الأمر', 'اسم ملف الصورة المخزون', 'تاريخ التسجيل', 'حساب تيليجرام المرسل'];
+            const rows = studentsList.map(s => {
+                const dateStr = s.createdAt ? new Date(s.createdAt).toLocaleString('ar-IQ') : '';
+                const guardianPhone = s.guardianPhone || '';
+                const photoFileName = s.photoFileName || buildStudentPhotoFilename(s.studentName);
+                const birthYearStr = formatBirthYearDisplay(s.birthYear);
+                return [
+                    `"${(s.studentName || '').replace(/"/g, '""')}"`,
+                    `"${birthYearStr.replace(/"/g, '""')}"`,
+                    `"${guardianPhone.replace(/"/g, '""')}"`,
+                    `"${photoFileName.replace(/"/g, '""')}"`,
+                    `"${dateStr}"`,
+                    `"${(s.submittedByTelegramUser || '').replace(/"/g, '""')}"`
+                ].join(',');
+            });
+
+            const csvContent = "\uFEFF" + headers.join(',') + "\n" + rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `سجل_الطلاب_وأولياء_الأمور_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('تم تحميل ملف قاعدة البيانات (CSV / Excel) بنجاح', 'success');
+        };
+
+        // 13. Startup
+        (async function initApp() {
+            if (!isBackendConfigured()) {
+                setDbStatus('offline');
+                console.warn("[Tadhiya] apiBaseUrl is not configured. Set APP_CONFIG.apiBaseUrl to your Supabase Functions URL.");
+                return;
+            }
+
+            if (!initDataRaw) {
+                setDbStatus('telegram');
+                console.warn("[Tadhiya] Telegram initData is unavailable. Open the page inside Telegram.");
+                return;
+            }
+
+            setDbStatus('connecting');
+            const isAdmin = await refreshAdminStatus();
+            if (isAdmin) {
+                document.getElementById('admin-lock-icon').className = "fa-solid fa-unlock-keyhole text-amber-300";
+            }
+        })();
+    </script>
+</body>
+</html>
