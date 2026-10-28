@@ -77,6 +77,14 @@
             color: #5d6f8c;
             font-weight: 500;
         }
+        select.input {
+            padding-left: 2.6rem;
+            cursor: pointer;
+        }
+        select.input option {
+            background: var(--surface-2);
+            color: var(--text);
+        }
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -259,6 +267,33 @@
                             >
                         </div>
                         <p id="quad-name-hint" class="text-[11px] mt-1.5" style="color: var(--muted);"></p>
+                    </div>
+
+                    <!-- الشعبة -->
+                    <div>
+                        <label for="student-class" class="label mb-2">الشعبة <span class="text-rose-400">*</span></label>
+                        <div class="relative">
+                            <span class="field-icon">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                            </span>
+                            <select id="student-class" required class="input appearance-none">
+                                <option value="" disabled selected>اختر الشعبة</option>
+                                <option value="الرابع العلمي أ">الرابع العلمي أ</option>
+                                <option value="الرابع العلمي ب">الرابع العلمي ب</option>
+                                <option value="الرابع العلمي ج">الرابع العلمي ج</option>
+                                <option value="الرابع الادبي أ">الرابع الادبي أ</option>
+                                <option value="الخامس العلمي أ">الخامس العلمي أ</option>
+                                <option value="الخامس العلمي ب">الخامس العلمي ب</option>
+                                <option value="الخامس الادبي أ">الخامس الادبي أ</option>
+                                <option value="السادس العلمي أ">السادس العلمي أ</option>
+                                <option value="السادس العلمي ب">السادس العلمي ب</option>
+                                <option value="السادس العلمي ج">السادس العلمي ج</option>
+                                <option value="السادس الادبي أ">السادس الادبي أ</option>
+                            </select>
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none" style="color: var(--muted);">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </span>
+                        </div>
                     </div>
 
                     <!-- سنة الميلاد -->
@@ -517,9 +552,10 @@
                         <tr class="text-[11px] font-bold" style="background: var(--surface-2); color: var(--muted);">
                             <th class="px-3">الصورة</th>
                             <th class="px-3">الاسم</th>
+                            <th class="px-3">الشعبة</th>
                             <th class="px-3">سنة الميلاد</th>
                             <th class="px-3">الهاتف</th>
-                            <th class="px-3">الملف</th>
+                            <th class="px-3 hidden md:table-cell">الملف</th>
                             <th class="px-3">التسجيل</th>
                             <th class="px-3 text-center">إجراء</th>
                         </tr>
@@ -561,6 +597,11 @@
                 <div class="flex items-start justify-between gap-2">
                     <h3 id="modal-student-name" class="text-base font-extrabold"></h3>
                     <span id="modal-student-date" class="chip"></span>
+                </div>
+
+                <div class="soft p-3 flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-bold" style="color: var(--muted);">الشعبة</span>
+                    <span id="modal-student-class" class="text-sm font-extrabold text-sky-300"></span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -1372,6 +1413,16 @@
                 return;
             }
 
+            // Validate class selection
+            const classSelect = document.getElementById('student-class');
+            const className = (classSelect?.value || '').trim();
+            if (!className) {
+                haptic('error');
+                showToast('يرجى اختيار الشعبة', 'error');
+                classSelect?.focus();
+                return;
+            }
+
             // Validate Birth Year (four digits, inside the allowed range)
             if (!/^\d{4}$/.test(birthYearRaw)) {
                 haptic('error');
@@ -1419,6 +1470,7 @@
                     method: 'POST',
                     body: JSON.stringify({
                         studentName: rawName,
+                        className: className,
                         birthYear: birthYear,
                         guardianPhone: guardianPhone,
                         photoFileName: photoFileName,
@@ -1434,7 +1486,7 @@
                 document.getElementById('section-register').classList.add('hidden');
                 document.getElementById('section-student-success').classList.remove('hidden');
                 document.getElementById('success-student-summary').textContent =
-                    `الاسم الرباعي: ${rawName} — سنة الميلاد: ${birthYear} — هاتف ولي الأمر: ${guardianPhone}`;
+                    `الاسم الرباعي: ${rawName} — الشعبة: ${className} — سنة الميلاد: ${birthYear} — هاتف ولي الأمر: ${guardianPhone}`;
                 document.getElementById('success-photo-filename').innerHTML =
                     `<i class="fa-regular fa-file-image ml-1"></i> تم حفظ الصورة باسم: ${escapeHtml(photoFileName)}`;
 
@@ -1483,7 +1535,8 @@
                 const phoneMatch = phoneVal.toLowerCase().includes(searchQuery);
                 const fileMatch = (item.photoFileName || '').toLowerCase().includes(searchQuery);
                 const birthMatch = String(item.birthYear || '').includes(searchQuery);
-                return nameMatch || phoneMatch || fileMatch || birthMatch;
+                const classMatch = (item.className || '').toLowerCase().includes(searchQuery);
+                return nameMatch || phoneMatch || fileMatch || birthMatch || classMatch;
             });
 
             filtered.sort((a, b) => {
@@ -1553,8 +1606,13 @@
                 birthBadge.className = "chip";
                 birthBadge.innerHTML = `<i class="fa-solid fa-cake-candles text-[10px]"></i> <span>${escapeHtml(formatBirthYearDisplay(student.birthYear))}</span>`;
 
+                const classBadge = document.createElement('div');
+                classBadge.className = "chip";
+                classBadge.innerHTML = `<i class="fa-solid fa-users-rectangle text-[10px]"></i> <span>${escapeHtml(student.className || 'بدون شعبة')}</span>`;
+
                 const badgesRow = document.createElement('div');
                 badgesRow.className = "flex flex-wrap items-center gap-1.5 mt-1.5";
+                badgesRow.appendChild(classBadge);
                 badgesRow.appendChild(numBadge);
                 badgesRow.appendChild(birthBadge);
 
@@ -1586,9 +1644,10 @@
                         <img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(storedPhotoFilename)}" loading="lazy" onerror="this.onerror=null;this.src=window.PHOTO_PLACEHOLDER" class="w-7 h-7 rounded-lg object-cover">
                     </td>
                     <td class="px-3 font-bold truncate max-w-[180px]">${escapeHtml(student.studentName)}</td>
+                    <td class="px-3 whitespace-nowrap" style="color: var(--muted);">${escapeHtml(student.className || '—')}</td>
                     <td class="px-3 text-violet-300 whitespace-nowrap">${escapeHtml(formatBirthYearDisplay(student.birthYear))}</td>
                     <td class="px-3 text-blue-300" dir="ltr">${escapeHtml(guardianPhone)}</td>
-                    <td class="px-3 truncate max-w-[160px]" style="color: var(--muted);">${escapeHtml(storedPhotoFilename)}</td>
+                    <td class="px-3 truncate max-w-[160px] hidden md:table-cell" style="color: var(--muted);">${escapeHtml(storedPhotoFilename)}</td>
                     <td class="px-3 text-[11px]" style="color: var(--muted);">${dateFormatted}</td>
                     <td class="px-3 text-center">
                         <span class="text-blue-400 font-bold text-[11px]">عرض</span>
@@ -1622,6 +1681,7 @@
             modalPhotoEl.src = student.photoUrl || PHOTO_PLACEHOLDER;
             document.getElementById('modal-student-name').textContent = student.studentName;
             document.getElementById('modal-student-birth').textContent = formatBirthYearDisplay(student.birthYear);
+            document.getElementById('modal-student-class').textContent = student.className || 'غير محددة';
             document.getElementById('modal-guardian-phone').textContent = guardianPhone;
             document.getElementById('modal-photo-filename').textContent = exactPhotoFilename;
             document.getElementById('modal-call-guardian').href = `tel:${guardianPhone}`;
@@ -1838,7 +1898,7 @@
                 return;
             }
 
-            const headers = ['الاسم الرباعي للطالب', 'سنة الميلاد', 'رقم هاتف ولي الأمر', 'اسم ملف الصورة المخزون', 'تاريخ التسجيل', 'حساب تيليجرام المرسل'];
+            const headers = ['الاسم الرباعي للطالب', 'الشعبة', 'سنة الميلاد', 'رقم هاتف ولي الأمر', 'اسم ملف الصورة المخزون', 'تاريخ التسجيل', 'حساب تيليجرام المرسل'];
             const rows = studentsList.map(s => {
                 const dateStr = s.createdAt ? new Date(s.createdAt).toLocaleString('ar-IQ') : '';
                 const guardianPhone = s.guardianPhone || '';
@@ -1846,6 +1906,7 @@
                 const birthYearStr = formatBirthYearDisplay(s.birthYear);
                 return [
                     `"${(s.studentName || '').replace(/"/g, '""')}"`,
+                    `"${(s.className || '').replace(/"/g, '""')}"`,
                     `"${birthYearStr.replace(/"/g, '""')}"`,
                     `"${guardianPhone.replace(/"/g, '""')}"`,
                     `"${photoFileName.replace(/"/g, '""')}"`,

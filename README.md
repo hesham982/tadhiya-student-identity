@@ -154,7 +154,7 @@ curl -s "https://gjyldmqwzlwbuuorqthc.supabase.co/functions/v1/students" \
 curl -s -X POST "https://gjyldmqwzlwbuuorqthc.supabase.co/functions/v1/students" \
   -H "Authorization: tma $INIT_DATA" \
   -H "Content-Type: application/json" \
-  -d '{"studentName":"أحمد محمد علي حسن","birthYear":1901,"guardianPhone":"07701234567","photoBase64":"data:image/jpeg;base64,..."}'
+  -d '{"studentName":"أحمد محمد علي حسن","className":"الخامس العلمي أ","birthYear":1901,"guardianPhone":"07701234567","photoBase64":"data:image/jpeg;base64,..."}'
 ```
 
 ## 5) النشر والربط بالبوت
@@ -197,6 +197,7 @@ curl -s -X POST "https://api.telegram.org/bot$TOKEN/setChatMenuButton" \
 - [ ] التسجيل من حساب تيليجرام عادي ينجح، ولا يستطيع رؤية بيانات الآخرين.
 - [ ] فتح لوحة الإدارة بحساب غير مشرف يعيد **403** (رسالة رفض واضحة).
 - [ ] `birthYear = 1901` أو `2050` يُرفض من الخادم (400) وليس من الواجهة فقط.
+- [ ] `className` غير موجود أو خارج القائمة المعتمدة يُرفض من الخادم (400).
 - [ ] رفع ملف ليس صورة (مثلاً PDF) يُرفض من الخادم (400) حتى لو غُيّر الـ MIME.
 - [ ] صورة أكبر من 2MB تُرفض.
 - [ ] طلب بدون `initData` أو بـ `initData` منتهٍ يعيد 401.
