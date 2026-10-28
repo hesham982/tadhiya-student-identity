@@ -394,21 +394,6 @@
                         </div>
                     </div>
 
-                    <!-- إقرار ولي الأمر -->
-                    <label class="soft flex items-start gap-2.5 p-3.5 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            id="guardian-consent"
-                            required
-                            class="mt-0.5 w-4 h-4 accent-blue-600"
-                        >
-                        <span class="text-[11px] leading-relaxed" style="color: var(--muted);">
-                            <strong class="text-slate-200">إقرار ولي الأمر:</strong>
-                            أوافق على جمع اسم الطالب وسنة الميلاد ورقم الهاتف والصورة لغرض تنظيم بطاقة الطالب.
-                            <a href="PRIVACY.md" target="_blank" class="text-blue-400 underline">سياسة الخصوصية</a>
-                        </span>
-                    </label>
-
                     <!-- Submit -->
                     <button
                         type="submit"
@@ -1403,15 +1388,6 @@
                 haptic('error');
                 showToast('يرجى إدخال رقم هاتف ولي الأمر بشكل صحيح (10 أرقام على الأقل)', 'error');
                 document.getElementById('guardian-phone').focus();
-                return;
-            }
-
-            // Guardian consent is required
-            const consent = document.getElementById('guardian-consent');
-            if (!consent.checked) {
-                haptic('error');
-                showToast('يجب تأكيد موافقة ولي الأمر قبل إرسال البيانات', 'error');
-                consent.focus();
                 return;
             }
 
