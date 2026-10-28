@@ -1840,11 +1840,15 @@
 
             try {
                 const zip = new JSZip();
-                const folder = zip.folder("صور_الطلاب_بأسمائهم");
+                const rootFolder = zip.folder("صور_الطلاب_بأسمائهم");
                 const usedFilenames = {};
+                const perClassCounts = {};
+                let totalPhotos = 0;
 
                 for (const student of studentsList) {
                     if (!student.photoUrl) continue;
+
+                    const className = String(student.className || '').trim() || 'بدون شعبة';
 
                     let baseName = String(student.studentName || 'طالب')
                         .trim()
@@ -1852,19 +1856,22 @@
                         .replace(/[\\/:*?"<>|]/g, '');
                     if (!baseName) baseName = 'طالب';
 
+                    const nameKey = `${className}/${baseName}`;
                     let finalFilename = `${baseName}.jpg`;
-                    if (usedFilenames[finalFilename]) {
-                        usedFilenames[finalFilename] += 1;
-                        finalFilename = `${baseName} (${usedFilenames[finalFilename]}).jpg`;
+                    if (usedFilenames[nameKey]) {
+                        usedFilenames[nameKey] += 1;
+                        finalFilename = `${baseName} (${usedFilenames[nameKey]}).jpg`;
                     } else {
-                        usedFilenames[finalFilename] = 1;
+                        usedFilenames[nameKey] = 1;
                     }
 
                     try {
                         const response = await fetch(student.photoUrl);
                         if (!response.ok) continue;
                         const blob = await response.blob();
-                        folder.file(finalFilename, blob);
+                        rootFolder.folder(className).file(finalFilename, blob);
+                        perClassCounts[className] = (perClassCounts[className] || 0) + 1;
+                        totalPhotos += 1;
                     } catch (e) {
                         console.error("Photo fetch failed:", student.id, e);
                     }
@@ -1880,7 +1887,8 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
 
-                showToast('تم تحميل أرشيف (ZIP) يحتوي على صور الطلاب مسماة بأسمائهم الرباعية!', 'success');
+                const classCount = Object.keys(perClassCounts).length;
+                showToast(`تم تحميل ZIP — ${totalPhotos} صورة موزعة على ${classCount} مجلد شعبة`, 'success');
             } catch (err) {
                 console.error("ZIP generation error:", err);
                 showToast('حدث خطأ أثناء تجهيز ملف الصور المضغوط', 'error');
