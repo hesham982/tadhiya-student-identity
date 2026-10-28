@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="dark">
     <meta name="format-detection" content="telephone=no">
     <title>اعدادية التضحية للبنين - صفحة بيانات هوية الطالب</title>
     <!-- Telegram WebApp SDK -->
@@ -18,77 +18,139 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-secondary-bg-color: #f1f5f9;
-            --tg-theme-text-color: #0f172a;
-            --tg-theme-hint-color: #64748b;
-            --tg-theme-link-color: #2563eb;
-            --tg-theme-button-color: #2563eb;
-            --tg-theme-button-text-color: #ffffff;
-            --tg-theme-header-bg-color: #1d4ed8;
+            color-scheme: dark;
+            --bg: #0a0f18;
+            --surface: #121a29;
+            --surface-2: #0d1420;
+            --line: #22304a;
+            --text: #e8eef8;
+            --muted: #8b9cb8;
+            --accent: #2563eb;
+            --ok: #10b981;
+            --danger: #f43f5e;
+        }
+        html, body {
+            background-color: var(--bg);
+            color: var(--text);
         }
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: var(--tg-theme-secondary-bg-color, #f1f5f9);
-            color: var(--tg-theme-text-color, #0f172a);
             margin: 0;
-            padding-top: env(safe-area-inset-top, 0);
-            padding-bottom: calc(env(safe-area-inset-bottom, 0) + 85px);
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
-        .tg-card {
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            transition: background-color 0.2s, border-color 0.2s;
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 18px;
         }
-        .tg-button {
-            background-color: var(--tg-theme-button-color, #2563eb);
-            color: var(--tg-theme-button-text-color, #ffffff);
+        .soft {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 14px;
         }
-        /* Telegram Native Dark Mode Support */
-        body.tg-dark {
-            --tg-theme-bg-color: #18222d;
-            --tg-theme-secondary-bg-color: #0e1621;
-            --tg-theme-text-color: #f5f5f5;
-            background-color: var(--tg-theme-secondary-bg-color, #0e1621);
-            color: var(--tg-theme-text-color, #f5f5f5);
+        .label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--muted);
         }
-        body.tg-dark .tg-card {
-            background-color: var(--tg-theme-bg-color, #18222d) !important;
-            border-color: #242f3d !important;
-            color: #f5f5f5 !important;
+        .input {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: .8rem 2.6rem .8rem 1rem;
+            color: var(--text);
+            font-size: .93rem;
+            font-weight: 600;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
         }
-        body.tg-dark input,
-        body.tg-dark select,
-        body.tg-dark textarea {
-            background-color: #0e1621 !important;
-            border-color: #2b3b4d !important;
-            color: #ffffff !important;
+        .input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .25);
         }
-        body.tg-dark input::placeholder {
-            color: #6c7883 !important;
+        .input::placeholder {
+            color: #5d6f8c;
+            font-weight: 500;
         }
-        body.tg-dark .bg-slate-50 {
-            background-color: #18222d !important;
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        body.tg-dark .bg-slate-100 {
-            background-color: #242f3d !important;
-            color: #e2e8f0 !important;
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
         }
-        body.tg-dark .text-slate-800, body.tg-dark .text-slate-700 {
-            color: #f1f5f9 !important;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: transform .12s ease, filter .12s ease;
         }
-        body.tg-dark .text-slate-500, body.tg-dark .text-slate-600 {
-            color: #94a3b8 !important;
+        .btn:active {
+            transform: scale(.98);
         }
-        body.tg-dark .border-slate-200, body.tg-dark .border-slate-300 {
-            border-color: #242f3d !important;
+        .btn:disabled {
+            opacity: .55;
         }
-        body.tg-dark .admin-table thead tr {
-            background-color: #18222d !important;
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
         }
-        body.tg-dark .admin-table tbody tr:hover {
-            background-color: rgba(36, 47, 61, 0.7) !important;
+        .btn-ghost {
+            background: var(--surface-2);
+            color: var(--text);
+            border-color: var(--line);
+        }
+        .btn-danger {
+            background: rgba(244, 63, 94, .12);
+            color: #fb7185;
+            border-color: rgba(244, 63, 94, .3);
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: .22rem .6rem;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--surface-2);
+            color: var(--muted);
+        }
+        .icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: rgba(37, 99, 235, .16);
+            color: #60a5fa;
+            border: 1px solid rgba(37, 99, 235, .32);
+        }
+        .field-icon {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            padding-right: .9rem;
+            color: #5d6f8c;
+            pointer-events: none;
+        }
+        .divider {
+            border-color: var(--line) !important;
         }
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -99,7 +161,7 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #2a3a55;
             border-radius: 9999px;
         }
         @keyframes fadeIn {
@@ -120,46 +182,33 @@
         .admin-table tbody tr {
             height: 30px;
         }
+        .admin-table tbody tr + tr {
+            border-color: var(--line) !important;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col pb-20">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Header Section (Student-Only Clean Header + Discreet Admin Button) -->
-    <header class="bg-gradient-to-l from-blue-700 via-blue-600 to-indigo-700 text-white shadow-lg sticky top-0 z-30">
-        <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25 shadow-inner">
-                    <i class="fa-solid fa-school text-xl"></i>
+    <!-- Header -->
+    <header class="sticky top-0 z-30 border-b" style="background: rgba(10, 15, 24, .92); backdrop-filter: blur(12px); border-color: var(--line);">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="icon-box w-10 h-10 flex-shrink-0">
+                    <i class="fa-solid fa-school"></i>
                 </div>
-                <div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="font-bold text-base sm:text-lg leading-tight">اعدادية التضحية للبنين</h1>
-                        <span class="bg-amber-400/30 border border-amber-200/50 text-amber-100 text-[10px] px-2 py-0.5 rounded-full font-bold">صفحة بيانات هوية الطالب</span>
-                    </div>
-                    <p id="tg-user-welcome" class="text-xs text-blue-100 mt-0.5">يرجى إكمال بيانات هويتك والتقاط صورتك المباشرة</p>
-                </div>
+                <h1 class="font-extrabold text-sm sm:text-base leading-tight truncate">اعدادية التضحية للبنين</h1>
             </div>
 
-            <div class="flex items-center gap-2">
-                <!-- Telegram WebApp Active Badge -->
-                <div id="tg-app-pill" class="hidden items-center gap-1.5 bg-white/15 px-2.5 py-1.5 rounded-xl text-xs font-bold border border-white/20 backdrop-blur-sm">
-                    <i class="fa-brands fa-telegram text-sky-300 text-sm"></i>
-                    <span id="tg-app-username" class="truncate max-w-[90px] sm:max-w-[130px]">تيليجرام</span>
-                </div>
-
-                <!-- Connection Status Badge -->
-                <div id="db-status-badge" class="hidden sm:flex items-center gap-1.5 bg-black/25 px-3 py-1.5 rounded-full text-xs font-medium border border-white/15">
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <!-- Connection Status -->
+                <div id="db-status-badge" class="hidden md:flex items-center gap-1.5 chip">
                     <span id="db-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                     <span id="db-status-text">جاري الاتصال...</span>
                 </div>
 
-                <!-- Discreet Admin Lock Button -->
-                <button
-                    id="admin-access-btn"
-                    onclick="handleAdminButtonClick()"
-                    title="بوابة المشرف"
-                    class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 active:scale-95 transition px-3 py-1.5 rounded-xl text-xs font-bold border border-white/20"
-                >
+                <!-- Admin -->
+                <button id="admin-access-btn" onclick="handleAdminButtonClick()" title="بوابة المشرف" class="btn btn-ghost px-3 py-2 text-xs">
                     <i id="admin-lock-icon" class="fa-solid fa-lock text-amber-300"></i>
                     <span id="admin-lock-label">الإدارة</span>
                 </button>
@@ -171,7 +220,7 @@
     <main class="max-w-3xl w-full mx-auto px-4 pt-5 flex-1">
 
         <!-- Notification Banner -->
-        <div id="toast-banner" class="hidden mb-4 p-4 rounded-2xl shadow-md border flex items-center justify-between gap-3 animate-fade">
+        <div id="toast-banner" class="hidden mb-4 p-3.5 rounded-2xl flex items-center justify-between gap-3 animate-fade border" style="background: var(--surface); border-color: var(--line);">
             <div class="flex items-center gap-3">
                 <i id="toast-icon" class="fa-solid fa-circle-check text-xl"></i>
                 <p id="toast-message" class="text-sm font-bold"></p>
@@ -183,34 +232,21 @@
 
         <!-- VIEW 1: STUDENT REGISTRATION FORM (DEFAULT PUBLIC VIEW FOR STUDENTS) -->
         <section id="section-register" class="animate-fade">
-            <div class="tg-card rounded-3xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                    <div>
-                        <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-id-card text-blue-600"></i>
-                            <span>استمارة بيانات هوية الطالب</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-1">يرجى إدخال الاسم الرباعي وسنة الميلاد ورقم هاتف ولي الأمر مع التقاط صورة شخصية مباشرة</p>
-                    </div>
-                    <span class="bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold px-2.5 py-1 rounded-xl flex items-center gap-1">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>التقاط مباشر فقط</span>
-                    </span>
+            <div class="card p-5">
+                <div class="flex items-center gap-2 border-b divider pb-4 mb-5">
+                    <i class="fa-solid fa-id-card text-blue-400"></i>
+                    <h2 class="text-base font-extrabold">بيانات الطالب</h2>
                 </div>
 
                 <form id="student-form" class="space-y-5">
-                    <!-- Student Full Quadruple Name (الاسم الرباعي) -->
+                    <!-- الاسم الرباعي -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label for="student-name" class="block text-sm font-bold text-slate-700">
-                                الاسم الرباعي للطالب <span class="text-rose-500">*</span>
-                            </label>
-                            <span id="quad-name-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 transition">
-                                0 / 4 مقاطع
-                            </span>
+                            <label for="student-name" class="label">الاسم الرباعي <span class="text-rose-400">*</span></label>
+                            <span id="quad-name-badge" class="chip" dir="ltr">0 / 4</span>
                         </div>
                         <div class="relative">
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                            <span class="field-icon">
                                 <i class="fa-solid fa-user"></i>
                             </span>
                             <input
@@ -218,59 +254,41 @@
                                 id="student-name"
                                 required
                                 oninput="handleQuadNameInput()"
-                                placeholder="الاسم الأول + الأب + الجد + اللقب (مثال: أحمد محمد علي حسن)"
-                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-medium"
+                                placeholder="أحمد محمد علي حسن"
+                                class="input"
                             >
                         </div>
-                        <div class="flex items-center justify-between mt-1.5">
-                            <p id="quad-name-hint" class="text-[11px] text-slate-500">
-                                يرجى كتابة الاسم الرباعي الكامل كما في الهوية الرسمية
-                            </p>
-                            <p id="photo-filename-live-badge" class="hidden text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
-                                <i class="fa-regular fa-image ml-1"></i>
-                                اسم الصورة: <span id="photo-filename-live-text"></span>
-                            </p>
-                        </div>
+                        <p id="quad-name-hint" class="text-[11px] mt-1.5" style="color: var(--muted);"></p>
                     </div>
 
-                    <!-- Student Birth Year Only (سنة الميلاد) — minimizes collected personal data -->
+                    <!-- سنة الميلاد -->
                     <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="student-birth-year" class="block text-sm font-bold text-slate-700">
-                                سنة الميلاد <span class="text-rose-500">*</span>
-                            </label>
-                            <span class="text-[11px] text-slate-400 font-medium">أربعة أرقام فقط</span>
-                        </div>
+                        <label for="student-birth-year" class="label mb-2">سنة الميلاد <span class="text-rose-400">*</span></label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 pointer-events-none">
+                            <span class="field-icon">
                                 <i class="fa-solid fa-calendar-day"></i>
                             </span>
                             <input
                                 type="number"
                                 id="student-birth-year"
                                 inputmode="numeric"
+                                dir="ltr"
                                 min="1990"
                                 max="2026"
                                 step="1"
                                 required
-                                placeholder="مثال: 2008"
-                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-right placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-bold tracking-wide"
+                                placeholder="2008"
+                                class="input text-left tracking-wide"
                             >
                         </div>
-                        <p id="birth-year-hint" class="text-[11px] text-slate-500 mt-1.5">أدخل سنة الميلاد فقط (مثال: 2008) — لا نجمع تاريخ الميلاد الكامل</p>
                     </div>
 
-                    <!-- Guardian Phone Number (رقم هاتف ولي الأمر) -->
+                    <!-- رقم هاتف ولي الأمر -->
                     <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="guardian-phone" class="block text-sm font-bold text-slate-700">
-                                رقم هاتف ولي الأمر <span class="text-rose-500">*</span>
-                            </label>
-                            <span class="text-[11px] text-slate-400 font-medium">يفضل رقم يدعم واتساب أو الاتصال المباشر</span>
-                        </div>
+                        <label for="guardian-phone" class="label mb-2">هاتف ولي الأمر <span class="text-rose-400">*</span></label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
-                                <i class="fa-solid fa-phone-volume"></i>
+                            <span class="field-icon">
+                                <i class="fa-solid fa-phone"></i>
                             </span>
                             <input
                                 type="tel"
@@ -278,47 +296,35 @@
                                 dir="ltr"
                                 inputmode="tel"
                                 required
-                                placeholder="0770XXXXXXX"
-                                class="w-full pr-10 pl-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-right placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm font-bold tracking-wide"
+                                placeholder="07701234567"
+                                class="input text-left tracking-wide"
                             >
                         </div>
                     </div>
 
-                    <!-- Strict Live Camera Capture Section (No Gallery Picker) -->
+                    <!-- صورة الطالب -->
                     <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-bold text-slate-700">
-                                الصورة الشخصية للطالب (كاميرا مباشرة) <span class="text-rose-500">*</span>
-                            </label>
-                            <span class="text-[11px] text-rose-600 font-bold flex items-center gap-1">
-                                <i class="fa-solid fa-ban"></i>
-                                الالتقاط بالكاميرا فقط
-                            </span>
-                        </div>
+                        <label class="label mb-2">صورة الطالب <span class="text-rose-400">*</span></label>
+                        <div class="soft p-4 text-center relative overflow-hidden">
 
-                        <!-- Strict Camera Wrapper -->
-                        <div class="border-2 border-slate-200 bg-slate-50 rounded-3xl p-4 text-center relative overflow-hidden">
-
-                            <!-- State A: Camera Idle (Before Starting Stream) -->
-                            <div id="camera-idle-state" class="py-6 flex flex-col items-center justify-center">
-                                <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-camera text-2xl"></i>
+                            <!-- Idle -->
+                            <div id="camera-idle-state" class="py-5 flex flex-col items-center gap-3">
+                                <div class="icon-box w-14 h-14">
+                                    <i class="fa-solid fa-camera text-xl"></i>
                                 </div>
-                                <p class="text-sm font-extrabold text-slate-800">الكاميرا المباشرة مطلوبة لالتقاط صورة الطالب</p>
-                                <p class="text-xs text-slate-500 mt-1 max-w-sm">اضغط على الزر أدناه لفتح الكاميرا الأمامية والتقاط صورة شخصية واضحة داخل الإطار المحدد</p>
                                 <button
                                     type="button"
                                     onclick="startLiveCamera()"
-                                    class="mt-4 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-md shadow-blue-600/20 transition"
+                                    class="btn btn-primary px-5 py-3 text-xs sm:text-sm"
                                 >
                                     <i class="fa-solid fa-video"></i>
-                                    <span>تشغيل الكاميرا لالتقاط الصورة</span>
+                                    <span>تشغيل الكاميرا</span>
                                 </button>
                             </div>
 
-                            <!-- State B: Live WebRTC Video Viewfinder -->
+                            <!-- Live Viewfinder -->
                             <div id="camera-stream-state" class="hidden flex-col items-center">
-                                <div class="relative w-full max-w-xs aspect-[3/4] bg-slate-900 rounded-2xl overflow-hidden shadow-inner border-2 border-blue-500 mx-auto">
+                                <div class="relative w-full max-w-xs aspect-[3/4] bg-black rounded-2xl overflow-hidden border border-blue-500/60 mx-auto">
                                     <video
                                         id="live-camera-video"
                                         autoplay
@@ -327,76 +333,47 @@
                                         class="w-full h-full object-cover mirror-video"
                                     ></video>
 
-                                    <!-- ID Photo Guide Overlay -->
-                                    <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-4">
-                                        <div class="w-44 h-56 border-2 border-dashed border-white/75 rounded-[50%] shadow-[0_0_0_9999px_rgba(15,23,42,0.38)]"></div>
-                                        <span class="mt-3 bg-black/60 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
-                                            ضع الوجه في منتصف الإطار
-                                        </span>
+                                    <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                        <div class="w-[70%] h-[62%] border-2 border-dashed border-white/60 rounded-[50%] shadow-[0_0_0_9999px_rgba(0,0,0,0.45)]"></div>
                                     </div>
 
-                                    <!-- Switch Front/Back Camera Button -->
                                     <button
                                         type="button"
                                         onclick="toggleCameraFacingMode()"
                                         title="تبديل الكاميرا"
-                                        class="absolute top-3 left-3 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition shadow"
+                                        class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center"
                                     >
-                                        <i class="fa-solid fa-camera-rotate"></i>
+                                        <i class="fa-solid fa-camera-rotate text-sm"></i>
                                     </button>
                                 </div>
 
-                                <div class="mt-4 flex items-center justify-center gap-3 w-full max-w-xs">
-                                    <button
-                                        type="button"
-                                        onclick="captureLiveFrame()"
-                                        class="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition"
-                                    >
+                                <div class="mt-3 flex items-center justify-center gap-2 w-full max-w-xs">
+                                    <button type="button" onclick="captureLiveFrame()" class="btn btn-primary flex-1 py-3 text-xs">
                                         <i class="fa-solid fa-camera"></i>
-                                        <span>التقاط الصورة الآن</span>
+                                        <span>التقاط</span>
                                     </button>
-                                    <button
-                                        type="button"
-                                        onclick="stopLiveCamera(true)"
-                                        class="py-3 px-4 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition"
-                                    >
+                                    <button type="button" onclick="stopLiveCamera(true)" class="btn btn-ghost px-4 py-3 text-xs">
                                         إلغاء
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- State C: Captured Photo Preview -->
+                            <!-- Preview -->
                             <div id="photo-preview-state" class="hidden flex-col sm:flex-row items-center justify-center gap-4 py-2">
                                 <div class="relative">
-                                    <img id="photo-preview-img" src="" alt="معاينة صورة الطالب" class="w-32 h-40 rounded-2xl object-cover border-2 border-emerald-500 shadow-md">
-                                    <span class="absolute -top-2 -right-2 bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs shadow">
+                                    <img id="photo-preview-img" src="" alt="" class="w-28 h-36 rounded-2xl object-cover border-2 border-emerald-500">
+                                    <span class="absolute -top-2 -right-2 bg-emerald-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px]">
                                         <i class="fa-solid fa-check"></i>
                                     </span>
                                 </div>
-                                <div class="text-center sm:text-right">
-                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        تم التقاط الصورة وتسميتها باسم الطالب
-                                    </span>
-                                    <p id="photo-saved-name-preview" class="text-xs font-extrabold text-blue-700 mt-2 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl"></p>
-                                    <p id="photo-size-info" class="text-[11px] text-slate-500 mt-1"></p>
-                                    <button
-                                        type="button"
-                                        onclick="retakePhoto()"
-                                        class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 bg-white px-3.5 py-2 rounded-xl border border-blue-200 shadow-sm transition"
-                                    >
-                                        <i class="fa-solid fa-rotate-right"></i>
-                                        <span>إعادة التقاط الصورة</span>
-                                    </button>
-                                </div>
+                                <button type="button" onclick="retakePhoto()" class="btn btn-ghost px-3.5 py-2 text-xs">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                    <span>إعادة التقاط</span>
+                                </button>
                             </div>
 
-                            <!-- Strict Hardware Camera Fallback (ONLY shown if WebRTC getUserMedia is blocked by older WebView) -->
-                            <div id="camera-fallback-box" class="hidden mt-3 pt-3 border-t border-amber-200 bg-amber-50/70 rounded-2xl p-3 text-center">
-                                <p class="text-xs text-amber-900 font-bold mb-2">
-                                    <i class="fa-solid fa-circle-exclamation ml-1"></i>
-                                    متصفحك الحالي يتطلب فتح تطبيق الكاميرا المباشر للجهاز:
-                                </p>
+                            <!-- Camera Fallback -->
+                            <div id="camera-fallback-box" class="hidden mt-3 pt-3 border-t divider">
                                 <input
                                     type="file"
                                     id="strict-camera-fallback-input"
@@ -407,326 +384,252 @@
                                 <button
                                     type="button"
                                     onclick="document.getElementById('strict-camera-fallback-input').click()"
-                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition"
+                                    class="btn btn-ghost px-4 py-2.5 text-xs"
                                 >
                                     <i class="fa-solid fa-camera"></i>
-                                    <span>فتح كاميرا الهاتف مباشرة</span>
+                                    <span>فتح كاميرا الهاتف</span>
                                 </button>
                             </div>
 
                         </div>
                     </div>
 
-                    <!-- Guardian Consent & Privacy Notice (required before registration) -->
-                    <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 space-y-2">
-                        <label class="flex items-start gap-2.5 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                id="guardian-consent"
-                                required
-                                class="mt-0.5 w-4 h-4 rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500"
-                            >
-                            <span class="text-[11px] text-emerald-900 leading-relaxed font-medium">
-                                <strong class="font-extrabold">إقرار ولي الأمر:</strong>
-                                أقرّ بأنني ولي أمر الطالب وأوافق على جمع اسمه الرباعي وسنة ميلاده ورقم هاتفي وصورته الشخصية
-                                لغرض التحقق من الهوية وتنظيم بطاقة الطالب المدرسية.
-                            </span>
-                        </label>
-                        <details class="text-[11px] text-emerald-900/90">
-                            <summary class="cursor-pointer font-bold text-emerald-800">سياسة الخصوصية (الغرض، الاطلاع، الحذف)</summary>
-                            <ul class="mt-2 space-y-1 list-disc pr-4 leading-relaxed">
-                                <li><strong>الغرض:</strong> التحقق من هوية الطالب وتنظيم سجلات المدرسة فقط.</li>
-                                <li><strong>من يطّلع:</strong> إدارة المدرسة والمشرفون المصرّح لهم فقط، ولا تُشارك مع أي طرف ثالث.</li>
-                                <li><strong>الاحتفاظ:</strong> حتى نهاية العام الدراسي أو حتى طلب الحذف.</li>
-                                <li><strong>الحذف:</strong> يمكن لولي الأمر طلب حذف البيانات في أي وقت عبر إدارة المدرسة.</li>
-                                <li><strong>الحد الأدنى:</strong> نجمع سنة الميلاد فقط ولا نجمع تاريخ الميلاد الكامل.</li>
-                            </ul>
-                        </details>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="pt-2">
-                        <button
-                            type="submit"
-                            id="submit-btn"
-                            class="w-full py-3.5 px-6 rounded-2xl tg-button font-bold text-base shadow-lg shadow-blue-600/25 hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2"
+                    <!-- إقرار ولي الأمر -->
+                    <label class="soft flex items-start gap-2.5 p-3.5 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            id="guardian-consent"
+                            required
+                            class="mt-0.5 w-4 h-4 accent-blue-600"
                         >
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>إرسال وحفظ بيانات الطالب</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+                        <span class="text-[11px] leading-relaxed" style="color: var(--muted);">
+                            <strong class="text-slate-200">إقرار ولي الأمر:</strong>
+                            أوافق على جمع اسم الطالب وسنة الميلاد ورقم الهاتف والصورة لغرض تنظيم بطاقة الطالب.
+                            <a href="PRIVACY.md" target="_blank" class="text-blue-400 underline">سياسة الخصوصية</a>
+                        </span>
+                    </label>
 
-            <!-- Student Privacy Notice -->
-            <div class="mt-4 bg-slate-100 border border-slate-200/80 rounded-2xl p-4 flex items-start gap-3">
-                <i class="fa-solid fa-shield-halved text-emerald-600 mt-0.5 text-lg"></i>
-                <div class="text-xs text-slate-600 leading-relaxed">
-                    <span class="font-bold text-slate-800">بياناتك وصورتك محمية وسرية:</span>
-                    يتم إرسال بياناتك وصورتك الملتقطة مباشرة إلى قاعدة البيانات الخاصة بالإدارة فقط، ولا يمكن لأي طالب آخر الاطلاع عليها أو تصفحها.
-                </div>
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="btn btn-primary w-full py-3.5 text-sm"
+                    >
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>حفظ البيانات</span>
+                    </button>
+                </form>
             </div>
         </section>
 
-        <!-- Student Submission Success Card (Shown after student submits) -->
+        <!-- Success -->
         <section id="section-student-success" class="hidden animate-fade">
-            <div class="tg-card rounded-3xl shadow-sm border border-emerald-200 p-7 text-center">
-                <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
-                    <i class="fa-solid fa-check-double"></i>
+            <div class="card p-7 text-center">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl" style="background: rgba(16, 185, 129, .15); color: #34d399;">
+                    <i class="fa-solid fa-check"></i>
                 </div>
-                <h2 class="text-xl font-extrabold text-slate-800">تم استلام وحفظ بياناتك بنجاح!</h2>
-                <p id="success-student-summary" class="text-sm text-slate-700 mt-2 font-bold"></p>
-                <p id="success-photo-filename" class="text-xs text-blue-700 bg-blue-50 border border-blue-200 inline-block px-3.5 py-1.5 rounded-xl font-bold mt-2"></p>
-                <div class="mt-5 bg-slate-50 rounded-2xl p-4 border border-slate-200/70 max-w-sm mx-auto text-xs text-slate-500">
-                    تم حفظ اسمك الرباعي وسنة ميلادك ورقم هاتف ولي الأمر وصورتك المسماة باسمك في قاعدة بيانات الإدارة بنجاح.
-                </div>
-                <div class="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+                <h2 class="text-lg font-extrabold">تم حفظ البيانات</h2>
+                <p id="success-student-summary" class="text-sm font-bold mt-2" style="color: var(--muted);"></p>
+                <p id="success-photo-filename" class="chip mt-3"></p>
+                <div class="mt-6 flex items-center gap-2.5">
                     <button
                         type="button"
                         onclick="resetForAnotherStudent()"
-                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-sm transition"
+                        class="btn btn-primary flex-1 py-3 text-xs"
                     >
                         <i class="fa-solid fa-rotate-right"></i>
-                        <span>العودة لاستمارة التسجيل</span>
+                        <span>تسجيل طالب آخر</span>
                     </button>
                     <button
                         type="button"
                         id="tg-close-app-btn"
                         onclick="closeTelegramWebApp()"
-                        class="hidden inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-5 py-3 rounded-xl transition"
+                        class="hidden btn btn-ghost flex-1 py-3 text-xs"
                     >
-                        <i class="fa-brands fa-telegram text-sky-600"></i>
-                        <span>إغلاق التطبيق</span>
+                        <i class="fa-brands fa-telegram"></i>
+                        <span>إغلاق</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW 2: PRIVATE ADMIN DATABASE DASHBOARD (SERVER-VERIFIED ADMIN ONLY) -->
+        <!-- Admin Dashboard -->
         <section id="section-browse" class="hidden animate-fade space-y-4">
 
-            <!-- Admin Top Bar -->
-            <div class="bg-slate-900 text-white rounded-3xl p-4 sm:p-5 shadow-md flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-300 flex items-center justify-center">
-                        <i class="fa-solid fa-user-shield text-lg"></i>
+            <div class="card p-4 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="icon-box w-10 h-10 flex-shrink-0" style="background: rgba(245, 158, 11, .14); border-color: rgba(245, 158, 11, .3); color: #fbbf24;">
+                        <i class="fa-solid fa-user-shield"></i>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h2 class="text-base font-extrabold">لوحة تحكم المشرف الخاصة</h2>
-                            <span id="students-count-badge" class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-full font-extrabold">0</span>
-                        </div>
-                        <p class="text-[11px] text-slate-300 mt-0.5">أنت فقط من يملك صلاحية تصفح صور وبيانات الطلاب</p>
-                    </div>
+                    <h2 class="text-sm font-extrabold truncate">لوحة المشرف</h2>
+                    <span id="students-count-badge" class="bg-blue-600 text-white text-[11px] px-2 py-0.5 rounded-full font-extrabold">0</span>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        onclick="lockAdminDashboard()"
-                        class="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition"
-                    >
-                        <i class="fa-solid fa-lock"></i>
-                        <span>قفل والعودة لواجهة الطالب</span>
-                    </button>
-                </div>
+                <button onclick="lockAdminDashboard()" class="btn btn-ghost px-3 py-2 text-[11px] flex-shrink-0">
+                    <i class="fa-solid fa-lock text-rose-400"></i>
+                    <span>خروج</span>
+                </button>
             </div>
 
-            <!-- Search, View Mode & Export Bar -->
-            <div class="tg-card rounded-3xl shadow-sm border border-slate-200/80 p-4 sm:p-5">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                    <div class="flex items-center gap-2">
-                        <button
-                            id="view-mode-cards"
-                            onclick="setAdminLayoutMode('cards')"
-                            class="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition"
-                        >
-                            <i class="fa-solid fa-grip"></i>
-                            <span>بطاقات الصور</span>
-                        </button>
-                        <button
-                            id="view-mode-table"
-                            onclick="setAdminLayoutMode('table')"
-                            class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition"
-                        >
-                            <i class="fa-solid fa-table"></i>
-                            <span>جدول منظم</span>
-                        </button>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button
-                            id="download-all-zip-btn"
-                            onclick="downloadAllPhotosAsZip()"
-                            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-sm transition"
-                        >
-                            <i class="fa-solid fa-file-zipper text-sm"></i>
-                            <span>تحميل الصور بأسماء الطلاب (ZIP)</span>
-                        </button>
-                        <button onclick="exportToCSV()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-sm transition">
-                            <i class="fa-solid fa-file-csv text-sm"></i>
-                            <span>تصدير Excel / CSV</span>
-                        </button>
-                    </div>
+            <div class="card p-4 space-y-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button
+                        id="view-mode-cards"
+                        onclick="setAdminLayoutMode('cards')"
+                        class="btn btn-primary px-3 py-2 text-xs"
+                    >
+                        <i class="fa-solid fa-grip"></i>
+                        <span>بطاقات</span>
+                    </button>
+                    <button
+                        id="view-mode-table"
+                        onclick="setAdminLayoutMode('table')"
+                        class="btn btn-ghost px-3 py-2 text-xs"
+                    >
+                        <i class="fa-solid fa-table"></i>
+                        <span>جدول</span>
+                    </button>
+                    <span class="flex-1"></span>
+                    <button
+                        id="download-all-zip-btn"
+                        onclick="downloadAllPhotosAsZip()"
+                        class="btn btn-ghost px-3 py-2 text-xs"
+                    >
+                        <i class="fa-solid fa-file-zipper"></i>
+                        <span>ZIP</span>
+                    </button>
+                    <button onclick="exportToCSV()" class="btn btn-ghost px-3 py-2 text-xs">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>CSV</span>
+                    </button>
                 </div>
 
-                <!-- Search & Sort Controls -->
-                <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                <div class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-1">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                        <span class="field-icon">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
                         <input
                             type="text"
                             id="search-input"
                             oninput="renderStudentsList()"
-                            placeholder="ابحث بالاسم الرباعي أو رقم هاتف ولي الأمر أو سنة الميلاد..."
-                            class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                            placeholder="بحث"
+                            class="input py-2.5 text-sm"
                         >
                     </div>
-                    <select id="sort-select" onchange="renderStudentsList()" class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="newest">الأحدث تسجيلاً أولاً</option>
-                        <option value="oldest">الأقدم تسجيلاً أولاً</option>
-                        <option value="name">ترتيب أبجدي (الاسم الرباعي)</option>
+                    <select id="sort-select" onchange="renderStudentsList()" class="input sm:w-auto py-2.5 text-xs">
+                        <option value="newest">الأحدث</option>
+                        <option value="oldest">الأقدم</option>
+                        <option value="name">أبجدي</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Students Cards Grid -->
-            <div id="students-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <!-- Populated dynamically via JS -->
-            </div>
+            <div id="students-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
 
-            <!-- Students Structured Table View -->
-            <div id="students-table-wrapper" class="hidden tg-card rounded-2xl border border-slate-200/80 shadow-sm overflow-x-auto">
+            <div id="students-table-wrapper" class="hidden card overflow-x-auto">
                 <table class="w-full text-right border-collapse admin-table">
                     <thead>
-                        <tr class="bg-slate-800 text-white text-xs font-bold">
+                        <tr class="text-[11px] font-bold" style="background: var(--surface-2); color: var(--muted);">
                             <th class="px-3">الصورة</th>
-                            <th class="px-3">الاسم الرباعي للطالب</th>
+                            <th class="px-3">الاسم</th>
                             <th class="px-3">سنة الميلاد</th>
-                            <th class="px-3">رقم هاتف ولي الأمر</th>
-                            <th class="px-3">اسم ملف الصورة المخزون</th>
-                            <th class="px-3">تاريخ التسجيل</th>
+                            <th class="px-3">الهاتف</th>
+                            <th class="px-3">الملف</th>
+                            <th class="px-3">التسجيل</th>
                             <th class="px-3 text-center">إجراء</th>
                         </tr>
                     </thead>
-                    <tbody id="students-table-body" class="divide-y divide-slate-200 text-xs text-slate-700">
-                        <!-- Populated dynamically via JS -->
-                    </tbody>
+                    <tbody id="students-table-body" class="divide-y" style="border-color: var(--line);"></tbody>
                 </table>
             </div>
 
-            <!-- Empty State -->
-            <div id="empty-database-state" class="hidden tg-card rounded-3xl border border-slate-200/80 p-10 text-center">
-                <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-folder-open text-2xl"></i>
+            <div id="empty-database-state" class="hidden card p-10 text-center">
+                <div class="icon-box w-14 h-14 mx-auto mb-3">
+                    <i class="fa-solid fa-folder-open text-lg"></i>
                 </div>
-                <h3 class="text-base font-bold text-slate-700">لا توجد سجلات مطابقة حالياً</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">لم يتم العثور على طلاب مسجلين أو لا توجد نتائج تطابق بحثك الحالي.</p>
+                <h3 class="text-sm font-bold" style="color: var(--muted);">لا توجد سجلات</h3>
             </div>
         </section>
 
     </main>
 
 
-    <!-- Full-Screen Photo & Student Details Modal (Admin Only) -->
-    <div id="student-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl animate-fade">
-            <div class="relative bg-slate-900 h-72 flex items-center justify-center">
-                <img id="modal-student-photo" src="" alt="صورة الطالب" class="max-h-full max-w-full object-contain">
-                <button onclick="closeStudentModal()" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition">
+    <!-- Student Modal -->
+    <div id="student-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="card max-w-md w-full overflow-hidden animate-fade">
+            <div class="relative bg-black h-72 flex items-center justify-center">
+                <img id="modal-student-photo" src="" alt="" class="max-h-full max-w-full object-contain">
+                <button onclick="closeStudentModal()" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <a
                     id="modal-download-photo"
                     href="#"
                     download="student_photo.jpg"
-                    class="absolute bottom-3 right-3 bg-white/95 hover:bg-white text-slate-900 text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 transition"
+                    class="absolute bottom-3 right-3 bg-white/90 text-slate-900 text-[11px] font-bold px-3 py-2 rounded-xl flex items-center gap-1.5"
                 >
                     <i class="fa-solid fa-download text-blue-600"></i>
-                    <span id="modal-download-photo-label">تحميل الصورة باسم الطالب</span>
+                    <span id="modal-download-photo-label">تحميل</span>
                 </a>
             </div>
-            <div class="p-5">
+            <div class="p-5 space-y-3">
                 <div class="flex items-start justify-between gap-2">
-                    <div>
-                        <span class="text-[11px] text-slate-400 font-bold block">الاسم الرباعي للطالب</span>
-                        <h3 id="modal-student-name" class="text-lg font-extrabold text-slate-800"></h3>
-                    </div>
-                    <span id="modal-student-date" class="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-medium"></span>
+                    <h3 id="modal-student-name" class="text-base font-extrabold"></h3>
+                    <span id="modal-student-date" class="chip"></span>
                 </div>
 
-                <!-- Stored Photo Filename Badge -->
-                <div class="mt-3 bg-blue-50/80 border border-blue-200/80 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <i class="fa-regular fa-file-image text-blue-600"></i>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-blue-500 font-bold block">اسم ملف الصورة المخزون</span>
-                            <p id="modal-photo-filename" class="text-xs font-extrabold text-blue-900 truncate"></p>
-                        </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="soft p-3">
+                        <span class="text-[10px] font-bold block" style="color: var(--muted);">سنة الميلاد</span>
+                        <span id="modal-student-birth" class="text-sm font-extrabold text-violet-300"></span>
+                    </div>
+                    <div class="soft p-3">
+                        <span class="text-[10px] font-bold block" style="color: var(--muted);">الهاتف</span>
+                        <span id="modal-guardian-phone" dir="ltr" class="text-sm font-extrabold select-all"></span>
                     </div>
                 </div>
 
-                <!-- Student Birth Year Box (سنة الميلاد) -->
-                <div class="mt-3 bg-violet-50/80 border border-violet-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <i class="fa-solid fa-cake-candles text-violet-600"></i>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-violet-500 font-bold block">سنة الميلاد</span>
-                            <p id="modal-student-birth" class="text-sm font-extrabold text-violet-900"></p>
-                        </div>
-                    </div>
+                <div class="soft px-3 py-2 flex items-center gap-2 min-w-0">
+                    <i class="fa-regular fa-file-image text-blue-400"></i>
+                    <p id="modal-photo-filename" class="text-xs font-bold truncate"></p>
                 </div>
 
-                <!-- Guardian Phone Number Box -->
-                <div class="mt-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between gap-2">
-                    <div>
-                        <span class="text-[11px] text-slate-400 font-bold block">رقم هاتف ولي الأمر</span>
-                        <span id="modal-guardian-phone" dir="ltr" class="text-sm font-extrabold text-slate-800 select-all inline-block"></span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <a
-                            id="modal-call-guardian"
-                            href="#"
-                            class="text-xs bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-sm"
-                            title="اتصال هاتفي"
-                        >
-                            <i class="fa-solid fa-phone"></i>
-                            <span>اتصال</span>
-                        </a>
-                        <button onclick="copyModalGuardianPhone()" class="text-xs bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-regular fa-copy"></i>
-                            <span>نسخ</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mt-5 flex items-center justify-between gap-3">
-                    <button id="modal-delete-btn" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
-                        <i class="fa-solid fa-trash-can"></i>
-                        <span>حذف السجل</span>
+                <div class="flex items-center gap-2">
+                    <a id="modal-call-guardian" href="#" class="btn btn-ghost flex-1 py-2.5 text-xs">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>اتصال</span>
+                    </a>
+                    <button onclick="copyModalGuardianPhone()" class="btn btn-ghost flex-1 py-2.5 text-xs">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>نسخ</span>
                     </button>
-                    <button onclick="closeStudentModal()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
-                        إغلاق النافذة
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <button id="modal-delete-btn" class="btn btn-danger flex-1 py-2.5 text-xs">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>حذف</span>
+                    </button>
+                    <button onclick="closeStudentModal()" class="btn btn-ghost flex-1 py-2.5 text-xs">
+                        إغلاق
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Custom Delete Confirmation Modal -->
-    <div id="confirm-delete-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl animate-fade">
-            <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
+    <!-- Delete Confirmation -->
+    <div id="confirm-delete-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="card max-w-sm w-full p-6 text-center animate-fade">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style="background: rgba(244, 63, 94, .15); color: #fb7185;">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <h3 class="text-base font-extrabold text-slate-800">تأكيد حذف بيانات الطالب</h3>
-            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">هل أنت متأكد من رغبتك في حذف هذا السجل نهائياً من قاعدة البيانات؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <h3 class="text-sm font-extrabold">حذف السجل نهائياً؟</h3>
             <div class="mt-5 flex items-center gap-2.5">
-                <button id="confirm-delete-yes" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs transition">
-                    نعم، احذف السجل
+                <button id="confirm-delete-yes" class="btn flex-1 py-2.5 text-xs" style="background: var(--danger); color: #fff;">
+                    نعم، احذف
                 </button>
-                <button onclick="closeConfirmDeleteModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">
+                <button onclick="closeConfirmDeleteModal()" class="btn btn-ghost flex-1 py-2.5 text-xs">
                     إلغاء
                 </button>
             </div>
@@ -793,15 +696,12 @@
         }
         window.haptic = haptic;
 
-        // Telegram Theme synchronization & Native Viewport setup
+        // Telegram theme: التطبيق بثيم غامق فقط
         function applyTelegramTheme() {
             if (!tg) return;
-            const isDark = tg.colorScheme === 'dark';
-            document.body.classList.toggle('tg-dark', isDark);
-
             try {
-                if (tg.setHeaderColor) tg.setHeaderColor('#1d4ed8');
-                if (tg.setBackgroundColor) tg.setBackgroundColor(isDark ? '#0e1621' : '#f1f5f9');
+                if (tg.setHeaderColor) tg.setHeaderColor('#0a0f18');
+                if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0f18');
             } catch (e) {}
         }
 
@@ -812,7 +712,7 @@
             tg.MainButton.offClick?.();
 
             if (view === 'register') {
-                tg.MainButton.setText("إرسال وحفظ بيانات الطالب");
+                tg.MainButton.setText("حفظ البيانات");
                 tg.MainButton.setParams?.({ color: '#2563eb', text_color: '#ffffff' });
                 tg.MainButton.show();
                 tg.MainButton.enable();
@@ -905,8 +805,6 @@
                 telegramUserId = String(u.id);
                 const fullName = [u.first_name, u.last_name].filter(Boolean).join(" ");
                 telegramUsername = fullName || (u.username ? `@${u.username}` : "مستخدم تيليجرام");
-
-                document.getElementById('tg-user-welcome').textContent = `مرحباً بك يا ${telegramUsername} — صفحة بيانات هوية الطالب`;
 
                 const pill = document.getElementById('tg-app-pill');
                 const unameDisplay = document.getElementById('tg-app-username');
@@ -1021,16 +919,19 @@
             const icon = document.getElementById('toast-icon');
             const msg = document.getElementById('toast-message');
 
-            banner.className = "mb-4 p-4 rounded-2xl shadow-sm border flex items-center justify-between gap-3 animate-fade ";
+            banner.className = "mb-4 p-3.5 rounded-2xl flex items-center justify-between gap-3 animate-fade border ";
             if (type === 'success') {
-                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
-                icon.className = "fa-solid fa-circle-check text-xl text-emerald-600";
+                banner.classList.add('border-emerald-500/30', 'text-emerald-300');
+                banner.style.background = 'rgba(16, 185, 129, .12)';
+                icon.className = "fa-solid fa-circle-check text-lg text-emerald-400";
             } else if (type === 'error') {
-                banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
-                icon.className = "fa-solid fa-circle-exclamation text-xl text-rose-600";
+                banner.classList.add('border-rose-500/30', 'text-rose-300');
+                banner.style.background = 'rgba(244, 63, 94, .12)';
+                icon.className = "fa-solid fa-circle-exclamation text-lg text-rose-400";
             } else {
-                banner.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
-                icon.className = "fa-solid fa-circle-info text-xl text-blue-600";
+                banner.classList.add('border-blue-500/30', 'text-blue-300');
+                banner.style.background = 'rgba(37, 99, 235, .12)';
+                icon.className = "fa-solid fa-circle-info text-lg text-blue-400";
             }
 
             msg.textContent = message;
@@ -1067,44 +968,40 @@
             const parts = rawValue.trim().split(/\s+/).filter(Boolean);
             const badge = document.getElementById('quad-name-badge');
             const hint = document.getElementById('quad-name-hint');
-            const filenameBadge = document.getElementById('photo-filename-live-badge');
-            const filenameText = document.getElementById('photo-filename-live-text');
             const previewSavedName = document.getElementById('photo-saved-name-preview');
 
             const count = parts.length;
-            badge.textContent = `${count} / 4 مقاطع`;
+            if (badge) badge.textContent = `${count} / 4`;
 
             if (count >= 4) {
-                if (!badge.dataset.completed) {
+                if (badge && !badge.dataset.completed) {
                     badge.dataset.completed = "true";
                     haptic('light');
                 }
-                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 transition";
-                hint.textContent = "الاسم الرباعي مكتمل بشكل صحيح ✓";
-                hint.className = "text-[11px] text-emerald-600 font-bold";
+                if (badge) badge.className = "chip border-emerald-500/40 text-emerald-400";
+                if (hint) {
+                    hint.textContent = "الاسم الرباعي مكتمل ✓";
+                    hint.className = "text-[11px] mt-1.5 text-emerald-400 font-bold";
+                }
             } else if (count > 0) {
-                delete badge.dataset.completed;
-                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 transition";
-                hint.textContent = `يرجى إكمال الاسم الرباعي (متبقي ${4 - count} ${4 - count === 1 ? 'اسم' : 'أسماء'})`;
-                hint.className = "text-[11px] text-amber-600 font-medium";
+                if (badge) delete badge.dataset.completed;
+                if (badge) badge.className = "chip border-amber-500/40 text-amber-400";
+                if (hint) {
+                    hint.textContent = `متبقي ${4 - count} ${4 - count === 1 ? 'اسم' : 'أسماء'}`;
+                    hint.className = "text-[11px] mt-1.5 text-amber-400 font-bold";
+                }
             } else {
-                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 transition";
-                hint.textContent = "يرجى كتابة الاسم الرباعي الكامل كما في الهوية الرسمية";
-                hint.className = "text-[11px] text-slate-500";
+                if (badge) badge.className = "chip";
+                if (hint) {
+                    hint.textContent = "";
+                    hint.className = "text-[11px] mt-1.5";
+                }
             }
 
-            if (count > 0) {
-                const generatedFilename = buildStudentPhotoFilename(rawValue);
-                filenameBadge.classList.remove('hidden');
-                filenameText.textContent = generatedFilename;
-                if (previewSavedName) {
-                    previewSavedName.textContent = `سيتم خزن الصورة باسم: ${generatedFilename}`;
-                }
-            } else {
-                filenameBadge.classList.add('hidden');
-                if (previewSavedName) {
-                    previewSavedName.textContent = `سيتم خزن الصورة باسم الطالب الرباعي تلقائياً`;
-                }
+            if (previewSavedName) {
+                previewSavedName.textContent = count > 0
+                    ? `سيتم خزن الصورة باسم: ${buildStudentPhotoFilename(rawValue)}`
+                    : "سيتم خزن الصورة باسم الطالب الرباعي تلقائياً";
             }
         };
 
@@ -1226,10 +1123,8 @@
 
             const currentNameVal = document.getElementById('student-name').value.trim();
             const photoFilename = buildStudentPhotoFilename(currentNameVal || 'الاسم الرباعي للطالب');
-            document.getElementById('photo-saved-name-preview').textContent = `اسم ملف الصورة: ${photoFilename}`;
-
-            const approxKb = Math.round((dataUrl.length * 3) / 4 / 1024);
-            document.getElementById('photo-size-info').textContent = `صورة كاميرا حية موثقة (~${approxKb} كيلوبايت)`;
+            const savedNameEl = document.getElementById('photo-saved-name-preview');
+            if (savedNameEl) savedNameEl.textContent = `اسم ملف الصورة: ${photoFilename}`;
 
             haptic('medium');
         };
@@ -1271,10 +1166,8 @@
 
                 const currentNameVal = document.getElementById('student-name').value.trim();
                 const photoFilename = buildStudentPhotoFilename(currentNameVal || 'الاسم الرباعي للطالب');
-                document.getElementById('photo-saved-name-preview').textContent = `اسم ملف الصورة: ${photoFilename}`;
-
-                const approxKb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
-                document.getElementById('photo-size-info').textContent = `تم التقاط وضغط الصورة (~${approxKb} كيلوبايت)`;
+                const savedNameEl = document.getElementById('photo-saved-name-preview');
+                if (savedNameEl) savedNameEl.textContent = `اسم ملف الصورة: ${photoFilename}`;
             } catch (err) {
                 console.error("Fallback image error:", err);
                 showToast('حدث خطأ أثناء معالجة الصورة الملتقطة', 'error');
@@ -1456,11 +1349,11 @@
             const btnTable = document.getElementById('view-mode-table');
 
             if (mode === 'cards') {
-                btnCards.className = "inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition";
-                btnTable.className = "inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition";
+                btnCards.className = "btn btn-primary px-3 py-2 text-xs";
+                btnTable.className = "btn btn-ghost px-3 py-2 text-xs";
             } else {
-                btnTable.className = "inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition";
-                btnCards.className = "inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl transition";
+                btnTable.className = "btn btn-primary px-3 py-2 text-xs";
+                btnCards.className = "btn btn-ghost px-3 py-2 text-xs";
             }
             renderStudentsList();
         };
@@ -1469,8 +1362,6 @@
         const birthYearInput = document.getElementById('student-birth-year');
         birthYearInput.min = String(BIRTH_YEAR_MIN);
         birthYearInput.max = String(BIRTH_YEAR_MAX);
-        document.getElementById('birth-year-hint').textContent =
-            `أدخل سنة الميلاد فقط بأربعة أرقام (من ${BIRTH_YEAR_MIN} إلى ${BIRTH_YEAR_MAX}) — لا نجمع تاريخ الميلاد الكامل`;
 
         // 8. Student Form Submission Handler
         const studentForm = document.getElementById('student-form');
@@ -1653,7 +1544,7 @@
 
                 // Render Card Item
                 const card = document.createElement('div');
-                card.className = "tg-card rounded-2xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center gap-3.5 cursor-pointer";
+                card.className = "card p-3 flex items-center gap-3 cursor-pointer";
                 card.onclick = () => openStudentModal(student.id);
 
                 const imgEl = document.createElement('img');
@@ -1662,32 +1553,35 @@
                 imgEl.alt = storedPhotoFilename;
                 imgEl.title = storedPhotoFilename;
                 imgEl.loading = 'lazy';
-                imgEl.className = "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 flex-shrink-0 bg-slate-100";
+                imgEl.className = "w-14 h-14 rounded-xl object-cover flex-shrink-0";
+                imgEl.style.background = 'var(--surface-2)';
 
                 const infoDiv = document.createElement('div');
                 infoDiv.className = "flex-1 min-w-0";
 
                 const nameEl = document.createElement('h4');
-                nameEl.className = "font-extrabold text-slate-800 text-sm sm:text-base truncate";
+                nameEl.className = "font-bold text-sm truncate";
                 nameEl.textContent = student.studentName;
 
                 const numBadge = document.createElement('div');
-                numBadge.className = "inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-xs px-2.5 py-0.5 rounded-lg";
-                numBadge.innerHTML = `<i class="fa-solid fa-phone text-[11px]"></i> <span dir="ltr">${escapeHtml(guardianPhone)}</span>`;
+                numBadge.className = "chip";
+                numBadge.innerHTML = `<i class="fa-solid fa-phone text-[10px]"></i> <span dir="ltr">${escapeHtml(guardianPhone)}</span>`;
 
                 const birthBadge = document.createElement('div');
-                birthBadge.className = "inline-flex items-center gap-1.5 bg-violet-50 text-violet-700 font-bold text-xs px-2.5 py-0.5 rounded-lg";
-                birthBadge.innerHTML = `<i class="fa-solid fa-cake-candles text-[11px]"></i> <span>سنة الميلاد: ${escapeHtml(formatBirthYearDisplay(student.birthYear))}</span>`;
+                birthBadge.className = "chip";
+                birthBadge.innerHTML = `<i class="fa-solid fa-cake-candles text-[10px]"></i> <span>${escapeHtml(formatBirthYearDisplay(student.birthYear))}</span>`;
 
                 const badgesRow = document.createElement('div');
-                badgesRow.className = "flex flex-wrap items-center gap-1.5 mt-1";
+                badgesRow.className = "flex flex-wrap items-center gap-1.5 mt-1.5";
                 badgesRow.appendChild(numBadge);
                 badgesRow.appendChild(birthBadge);
 
                 const metaRow = document.createElement('div');
-                metaRow.className = "flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-1.5 border-t border-slate-100 gap-2";
+                metaRow.className = "flex items-center justify-between text-[10px] mt-2 pt-1.5 border-t gap-2";
+                metaRow.style.borderColor = 'var(--line)';
+                metaRow.style.color = 'var(--muted)';
                 metaRow.innerHTML = `
-                    <span class="truncate text-emerald-700 font-bold" title="${escapeHtml(storedPhotoFilename)}">
+                    <span class="truncate font-bold" title="${escapeHtml(storedPhotoFilename)}">
                         <i class="fa-regular fa-file-image ml-1"></i>${escapeHtml(storedPhotoFilename)}
                     </span>
                     <span class="flex-shrink-0">${dateFormatted}</span>
@@ -1701,21 +1595,21 @@
                 card.appendChild(infoDiv);
                 cardsContainer.appendChild(card);
 
-                // Render Structured Table Row
+                // Render Table Row
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-blue-50/50 transition cursor-pointer";
+                tr.className = "cursor-pointer";
                 tr.onclick = () => openStudentModal(student.id);
                 tr.innerHTML = `
-                    <td class="px-3 py-1">
-                        <img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(storedPhotoFilename)}" loading="lazy" onerror="this.onerror=null;this.src=window.PHOTO_PLACEHOLDER" class="w-7 h-7 rounded-lg object-cover border border-slate-200">
+                    <td class="px-3 py-1.5">
+                        <img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(storedPhotoFilename)}" loading="lazy" onerror="this.onerror=null;this.src=window.PHOTO_PLACEHOLDER" class="w-7 h-7 rounded-lg object-cover">
                     </td>
-                    <td class="px-3 font-bold text-slate-800 truncate max-w-[180px]">${escapeHtml(student.studentName)}</td>
-                    <td class="px-3 font-bold text-violet-700 whitespace-nowrap">${escapeHtml(formatBirthYearDisplay(student.birthYear))}</td>
-                    <td class="px-3 font-bold text-blue-700" dir="ltr">${escapeHtml(guardianPhone)}</td>
-                    <td class="px-3 text-emerald-700 font-bold truncate max-w-[160px]">${escapeHtml(storedPhotoFilename)}</td>
-                    <td class="px-3 text-slate-400 text-[11px]">${dateFormatted}</td>
+                    <td class="px-3 font-bold truncate max-w-[180px]">${escapeHtml(student.studentName)}</td>
+                    <td class="px-3 text-violet-300 whitespace-nowrap">${escapeHtml(formatBirthYearDisplay(student.birthYear))}</td>
+                    <td class="px-3 text-blue-300" dir="ltr">${escapeHtml(guardianPhone)}</td>
+                    <td class="px-3 truncate max-w-[160px]" style="color: var(--muted);">${escapeHtml(storedPhotoFilename)}</td>
+                    <td class="px-3 text-[11px]" style="color: var(--muted);">${dateFormatted}</td>
                     <td class="px-3 text-center">
-                        <button class="text-blue-600 hover:text-blue-800 font-bold">عرض / تحميل</button>
+                        <span class="text-blue-400 font-bold text-[11px]">عرض</span>
                     </td>
                 `;
                 tableBody.appendChild(tr);
