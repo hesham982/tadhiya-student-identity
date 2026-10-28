@@ -1355,9 +1355,16 @@
             }
 
             const btn = document.getElementById('admin-access-btn');
-            const originalHtml = btn.innerHTML;
+            const iconEl = document.getElementById('admin-lock-icon');
+            const labelEl = document.getElementById('admin-lock-label');
+            const originalIcon = iconEl ? iconEl.className : '';
+            const originalLabel = labelEl ? labelEl.textContent : '';
+
+            // لا نستبدل innerHTML للزر، لأن ذلك يحذف عنصري الأيقونة والنص
+            // اللذين تعتمد عليهما unlockAdminDashboard.
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amber-300"></i><span>جاري التحقق...</span>`;
+            if (iconEl) iconEl.className = 'fa-solid fa-spinner fa-spin text-amber-300';
+            if (labelEl) labelEl.textContent = 'جاري التحقق...';
 
             try {
                 const isAdmin = await refreshAdminStatus();
@@ -1367,9 +1374,16 @@
                     haptic('error');
                     showToast('هذه اللوحة مخصصة لمشرف المدرسة فقط. تم رفض الوصول.', 'error');
                 }
+            } catch (err) {
+                console.error('Admin unlock failed:', err);
+                haptic('error');
+                showToast('تعذر التحقق من صلاحية المشرف. حاول مرة أخرى.', 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                if (!isAdminUnlocked) {
+                    if (iconEl) iconEl.className = originalIcon;
+                    if (labelEl) labelEl.textContent = originalLabel;
+                }
             }
         };
 
@@ -1381,8 +1395,10 @@
             document.getElementById('section-student-success').classList.add('hidden');
             document.getElementById('section-browse').classList.remove('hidden');
 
-            document.getElementById('admin-lock-icon').className = "fa-solid fa-unlock text-emerald-300";
-            document.getElementById('admin-lock-label').textContent = "خروج المشرف";
+            const lockIcon = document.getElementById('admin-lock-icon');
+            const lockLabel = document.getElementById('admin-lock-label');
+            if (lockIcon) lockIcon.className = "fa-solid fa-unlock text-emerald-300";
+            if (lockLabel) lockLabel.textContent = "خروج المشرف";
 
             updateTelegramMainButton('admin');
             updateTelegramBackButton();
@@ -1422,8 +1438,10 @@
             document.getElementById('section-browse').classList.add('hidden');
             document.getElementById('section-register').classList.remove('hidden');
 
-            document.getElementById('admin-lock-icon').className = "fa-solid fa-lock text-amber-300";
-            document.getElementById('admin-lock-label').textContent = "الإدارة";
+            const lockIcon = document.getElementById('admin-lock-icon');
+            const lockLabel = document.getElementById('admin-lock-label');
+            if (lockIcon) lockIcon.className = "fa-solid fa-lock text-amber-300";
+            if (lockLabel) lockLabel.textContent = "الإدارة";
 
             updateTelegramMainButton('register');
             updateTelegramBackButton();
@@ -1992,7 +2010,8 @@
             setDbStatus('connecting');
             const isAdmin = await refreshAdminStatus();
             if (isAdmin) {
-                document.getElementById('admin-lock-icon').className = "fa-solid fa-unlock-keyhole text-amber-300";
+                const lockIcon = document.getElementById('admin-lock-icon');
+                if (lockIcon) lockIcon.className = "fa-solid fa-unlock-keyhole text-amber-300";
             }
         })();
     </script>
